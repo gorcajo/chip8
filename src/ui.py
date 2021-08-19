@@ -61,6 +61,13 @@ class Panel(Drawable):
             chip8_pc=chip8.pc)
         self.drawables.append(memory_view)
 
+        help_text = HelpText(
+            screen=screen,
+            x=MARGIN,
+            y=games_creen.bottom + MARGIN,
+            font=self.font)
+        self.drawables.append(help_text)
+
 
     def draw(self) -> None:
         for drawable in self.drawables:
@@ -138,6 +145,48 @@ class MemoryView(Drawable):
             self.y,
             longest_line_length * FONT_WIDTH + 2 * MARGIN,
             len(lines) * FONT_SIZE + 2 * MARGIN)
+
+        pygame.draw.rect(self.screen, PRIMARY_COLOR, rect, 1)
+
+
+class HelpText(Drawable):
+
+    def __init__(self, screen: pygame.Surface, x: int, y: int, font: pygame.font) -> None:
+        super().__init__(screen, x, y)
+        self.font = font
+        self.lines = [
+            'Interpreter controls:',
+            '  Shift+P: Run/Pause',
+            '  Shift+S: Step',
+            '  Shift+R: Reset',
+            '',
+            'Game controls:',
+            '+---+---+---+---+       +---+---+---+---+',
+            '| 1 | 2 | 3 | C |       | 1 | 2 | 3 | 4 |',
+            '+---+---+---+---+       +---+---+---+---+',
+            '| 4 | 5 | 6 | D |       | Q | W | E | R |',
+            '+---+---+---+---+  ---> +---+---+---+---+',
+            '| 7 | 8 | 9 | E |       | A | S | D | F |',
+            '+---+---+---+---+       +---+---+---+---+',
+            '| A | 0 | B | F |       | Z | X | C | V |',
+            '+---+---+---+---+       +---+---+---+---+',
+        ]
+
+
+    def draw(self) -> None:
+        for i, line in enumerate(self.lines):
+            self.screen.blit(
+                self.font.render(line, False, PRIMARY_COLOR),
+                (MARGIN + self.x, MARGIN + self.y + i * FONT_SIZE))
+
+        longest_line = max(self.lines, key=len)
+        longest_line_length = len(longest_line)
+
+        rect = pygame.Rect(
+            self.x,
+            self.y,
+            longest_line_length * FONT_WIDTH + 2 * MARGIN,
+            len(self.lines) * FONT_SIZE + 2 * MARGIN)
 
         pygame.draw.rect(self.screen, PRIMARY_COLOR, rect, 1)
 
