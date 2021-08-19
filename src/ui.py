@@ -60,13 +60,15 @@ class Panel(Drawable):
 
     def __init__(self, screen: pygame.Surface, chip8: chip8.Chip8) -> None:
         super().__init__(screen)
-
         self.font = pygame.font.SysFont(FONT_FAMILY, FONT_SIZE)
-
         self.drawables: List[Drawable] = []
+
+        # Game screen:
 
         game_screen = GameScreen(screen=screen, x=MARGIN, y=MARGIN, pixel_size=PIXEL_SIZE, chip8_display=chip8.display)
         self.drawables.append(game_screen)
+
+        # CHIP-8 inspection:
 
         memory_view = MemoryView(
             screen=screen,
@@ -131,14 +133,49 @@ class Panel(Drawable):
             chip8_stack=chip8.stack)
         self.drawables.append(stack_view)
 
-        help_text = HelpText(
+        # Game controls label:
+
+        text = ''
+        text += 'Game controls\n'
+        text += '\n'
+        text += '+---+---+---+---+       +---+---+---+---+\n'
+        text += '| 1 | 2 | 3 | C |   →   | 1 | 2 | 3 | 4 |\n'
+        text += '+---+---+---+---+       +---+---+---+---+\n'
+        text += '| 4 | 5 | 6 | D |   →   | Q | W | E | R |\n'
+        text += '+---+---+---+---+       +---+---+---+---+\n'
+        text += '| 7 | 8 | 9 | E |   →   | A | S | D | F |\n'
+        text += '+---+---+---+---+       +---+---+---+---+\n'
+        text += '| A | 0 | B | F |   →   | Z | X | C | V |\n'
+        text += '+---+---+---+---+       +---+---+---+---+'
+
+        game_controls_label = Label(
             screen=screen,
             font=self.font,
             x=MARGIN,
             y=game_screen.bottom + MARGIN,
             w=440,
-            h=196)
-        self.drawables.append(help_text)
+            h=memory_view.bottom - game_screen.bottom - MARGIN,
+            text=text)
+        self.drawables.append(game_controls_label)
+
+        # CHIP-8 interpreter controls label:
+
+        text = ''
+        text += 'CHIP-8 controls\n'
+        text += '\n'
+        text += ' F1: Play/Pause\n'
+        text += ' F2: Step\n'
+        text += ' F3: Reset\n'
+
+        interpreter_controls_label = Label(
+            screen=screen,
+            font=self.font,
+            x=game_controls_label.right + MARGIN,
+            y=game_screen.bottom + MARGIN,
+            w=memory_view.left - 2*MARGIN - game_controls_label.right,
+            h=memory_view.bottom - game_screen.bottom - MARGIN,
+            text=text)
+        self.drawables.append(interpreter_controls_label)
 
 
     def draw(self) -> None:
@@ -298,24 +335,11 @@ class StackView(Drawable):
         self.draw_frame()
 
 
-class HelpText(Drawable):
+class Label(Drawable):
 
-    def __init__(self, screen: pygame.Surface, font: pygame.font, x: int, y: int, w: int, h: int) -> None:
+    def __init__(self, screen: pygame.Surface, font: pygame.font, x: int, y: int, w: int, h: int, text: str) -> None:
         super().__init__(screen, font, x, y, w, h)
-
-        self.lines = [
-            'Game controls',
-            '',
-            '+---+---+---+---+       +---+---+---+---+',
-            '| 1 | 2 | 3 | C |   →   | 1 | 2 | 3 | 4 |',
-            '+---+---+---+---+       +---+---+---+---+',
-            '| 4 | 5 | 6 | D |   →   | Q | W | E | R |',
-            '+---+---+---+---+       +---+---+---+---+',
-            '| 7 | 8 | 9 | E |   →   | A | S | D | F |',
-            '+---+---+---+---+       +---+---+---+---+',
-            '| A | 0 | B | F |   →   | Z | X | C | V |',
-            '+---+---+---+---+       +---+---+---+---+',
-        ]
+        self.lines = text.splitlines()
 
 
     def draw(self) -> None:
