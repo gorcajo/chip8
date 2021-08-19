@@ -25,7 +25,7 @@ class Engine:
         self.font = pygame.font.SysFont(FONT_FAMILY, FONT_SIZE)
 
         self.screen = pygame.display.set_mode(SCREEN_GEOMETRY, 0, 32)
-        pygame.display.set_caption('Mesh Viewer')
+        pygame.display.set_caption('CHIP-8 Interpreter')
 
         self.chip8 = chip8.Chip8()
         self.init_drawables()
