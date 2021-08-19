@@ -76,7 +76,7 @@ class Panel(Drawable):
             font=self.font,
             x=game_screen.right + MARGIN,
             y=game_screen.top,
-            w=320,
+            w=400,
             h=532,
             chip8_memory=chip8.memory,
             chip8_pc=chip8.pc)
@@ -238,7 +238,7 @@ class MemoryView(Drawable):
 
     def draw(self) -> None:
         lines = []
-        lines.append('  ADDR  DATA  MNEMONIC        ')
+        lines.append('  ADDR  DATA  DESCRIPTION')
 
         for i in range(-self.addresses_to_show // 2 + 2, self.addresses_to_show // 2, 2):
             address = self.chip8_pc.value + i
@@ -250,7 +250,8 @@ class MemoryView(Drawable):
             second_byte = self.chip8_memory[address + 1]
 
             marker = '→' if i == 0 else ' '
-            lines.append(f'{marker}  {to_hex(address, 3)}  {to_hex(first_byte, 2)}{to_hex(second_byte, 2)}')
+            instruction = chip8.Instruction(first_byte, second_byte)
+            lines.append(f'{marker}  {to_hex(address, 3)}  {instruction.hex}  {instruction.description}')
 
         self.draw_text(lines, highlights=[16])
         self.draw_frame()

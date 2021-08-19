@@ -4,7 +4,7 @@ from constants import *
 
 
 def to_hex(num: int, digits: int) -> str:
-    return ('0' * digits + format(num, 'x'))[-digits:].upper()
+    return ('0' * digits + format(num, 'x'))[-digits:].lower()
 
 
 def get_view_size(lines: List[str]) -> Tuple[int, int]:

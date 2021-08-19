@@ -40,19 +40,129 @@ class Chip8:
 class Instruction:
 
     def __init__(self, msb: int, lsb: int) -> None:
-        self.k = msb >> 4
-        self.x = msb & 0x0f
-        self.y = lsb >> 4
-        self.n = lsb & 0x0f
+        self._k = msb >> 4
+        self._x = msb & 0x0f
+        self._y = lsb >> 4
+        self._n = lsb & 0x0f
 
 
     @property
     def hex(self) -> str:
-        return f'{to_hex(self.k, 1)}{to_hex(self.x, 1)}{to_hex(self.y, 1)}{to_hex(self.n, 1)}'
+        return f'{to_hex(self._k, 1)}{to_hex(self._x, 1)}{to_hex(self._y, 1)}{to_hex(self._n, 1)}'
+
+
+    @property
+    def k(self) -> str:
+        return f'{to_hex(self._k, 1)}'
+
+
+    @property
+    def x(self) -> str:
+        return f'{to_hex(self._x, 1)}'
+
+
+    @property
+    def y(self) -> str:
+        return f'{to_hex(self._y, 1)}'
+
+
+    @property
+    def n(self) -> str:
+        return f'{to_hex(self._n, 1)}'
+
+
+    @property
+    def nn(self) -> str:
+        return f'{to_hex(self._y, 1)}{to_hex(self._n, 1)}'
+
+
+    @property
+    def nnn(self) -> str:
+        return f'{to_hex(self._x, 1)}{to_hex(self._y, 1)}{to_hex(self._n, 1)}'
+
+
+    @property
+    def description(self) -> str:
+        if self._k == 0x0:
+            if self._x == 0x0 and self._y == 0xe and self._n == 0x0:
+                return f'clear screen'
+            elif self._x == 0x0 and self._y == 0xe and self._n == 0xe:
+                return f'return'
+            else:
+                return f''
+        elif self._k == 0x1:
+            return f'jump to {self.nnn}'
+        elif self._k == 0x2:
+            return f'call {self.nnn}'
+        elif self._k == 0x3:
+            return f'skip if V{self.x} == {self.nn}'
+        elif self._k == 0x4:
+            return f'skip if V{self.x} != {self.nn}'
+        elif self._k == 0x5 and self._n == 0x0:
+            return f'skip if V{self.x} == V{self.y}'
+        elif self._k == 0x6:
+            return f'V{self.x} = {self.nn}'
+        elif self._k == 0x7:
+            return f'V{self.x} += {self.nn} (no carry)'
+        elif self._k == 0x8:
+            if self._n == 0x0:
+                return f'V{self.x} = V{self.y}'
+            elif self._n == 0x1:
+                return f'V{self.x} = V{self.x} | V{self.y}'
+            elif self._n == 0x2:
+                return f'V{self.x} = V{self.x} & V{self.y}'
+            elif self._n == 0x3:
+                return f'V{self.x} = V{self.x} ^ V{self.y}'
+            elif self._n == 0x4:
+                return f'V{self.x} += V{self.y}'
+            elif self._n == 0x5:
+                return f'V{self.x} -= V{self.y}'
+            elif self._n == 0x6:
+                return f'V{self.x} >>= 1'
+            elif self._n == 0x7:
+                return f'V{self.x} = V{self.y} - V{self.x}'
+            elif self._n == 0xe:
+                return f'V{self.x} <<= 1'
+        elif self._k == 0x9 and self._n == 0x0:
+            return f'skip if V{self.x} != V{self.y}'
+        elif self._k == 0xa:
+            return f'I = {self.nnn}'
+        elif self._k == 0xb:
+            return f'jump to V0 + {self.nnn}'
+        elif self._k == 0xc:
+            return f'V{self.x} = rand(0, 15) & {self.nn}'
+        elif self._k == 0xd:
+            return f'display at (V{self.x}, V{self.y})'
+        elif self._k == 0xe:
+            if self._y == 0x9 and self._n == 0xe:
+                return f'skip if get_key() == V{self.x}'
+            elif self._y == 0xa and self._n == 0x1:
+                return f'skip if get_key() != V{self.x}'
+        elif self._k == 0xf:
+            if self._y == 0x0 and self._n == 0x7:
+                return f'V{self.x} = get_delay_timer()'
+            elif self._y == 0x1 and self._n == 0x5:
+                return f'set_delay_timer(V{self.x})'
+            elif self._y == 0x1 and self._n == 0x8:
+                return f'set_sound_timer(V{self.x})'
+            elif self._y == 0x1 and self._n == 0xe:
+                return f'I += V{self.x}'
+            elif self._y == 0x0 and self._n == 0xa:
+                return f'V{self.x} = get_key() (blocking)'
+            elif self._y == 0x2 and self._n == 0x9:
+                return f'I = font_at(V{self.x})'
+            elif self._y == 0x3 and self._n == 0x3:
+                return f'I* = to_bcd(V{self.x})'
+            elif self._y == 0x5 and self._n == 0x5:
+                return f'reg_dump(Vx, &I)'
+            elif self._y == 0x6 and self._n == 0x5:
+                return f'reg_load(Vx, &I)'
+
+        return '???'
 
 
     def __str__(self) -> str:
-        return self.hex
+        return f'{self.hex}: {self.description}'
 
 
 
