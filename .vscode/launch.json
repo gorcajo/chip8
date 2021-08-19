@@ -9,6 +9,9 @@
             "type": "python",
             "request": "launch",
             "program": "src/main.py",
+            "args": [
+                "test-roms/1-ibm-logo.ch8"
+            ],
             "console": "integratedTerminal"
         }
     ]

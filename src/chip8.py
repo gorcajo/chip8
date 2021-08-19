@@ -3,8 +3,8 @@ from typing import List
 
 class Chip8:
 
-    def __init__(self) -> None:
-        self.memory = Memory(4096)
+    def __init__(self, rom: List[int]) -> None:
+        self.memory = Memory(4096, rom)
         self.display = Display(64, 32)
         self.pc = ProgramCounter()
         self.index = IndexRegister()
@@ -16,13 +16,24 @@ class Chip8:
 
 class Memory:
 
-    def __init__(self, size: int) -> None:
+    def __init__(self, size: int, rom: List[int]) -> None:
         self.size = size
-        self.addresses = [0] * size
+        self.load(rom)
 
 
     def get_data_at(self, address: int) -> int:
         return self.addresses[address]
+
+
+    def clear(self) -> None:
+        self.addresses = [0] * self.size
+
+
+    def load(self, data: List[int]) -> None:
+        self.clear()
+
+        for i, byte in enumerate(data):
+            self.addresses[i] = byte
 
 
     def __len__(self):
