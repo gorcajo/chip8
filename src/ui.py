@@ -168,8 +168,10 @@ class MemoryView(Drawable):
             lines.append(f'{marker}  {to_hex(address, 3)}  {to_hex(first_byte, 2)}{to_hex(second_byte, 2)}')
         
         for i, line in enumerate(lines):
+            color = HIGHLIGHT_COLOR if '→' in line else PRIMARY_COLOR
+
             self.screen.blit(
-                self.font.render(line, False, PRIMARY_COLOR),
+                self.font.render(line, False, color),
                 (MARGIN + self.x, MARGIN + self.y + i * FONT_SIZE))
 
         pygame.draw.rect(self.screen, PRIMARY_COLOR, pygame.Rect(self.x, self.y, self.w, self.h), 1)
@@ -272,21 +274,17 @@ class HelpText(Drawable):
         super().__init__(screen, x, y)
         self.font = font
         self.lines = [
-            'Interpreter controls:',
-            '  Shift+P: Run/Pause',
-            '  Shift+S: Step',
-            '  Shift+R: Reset',
+            'Game controls',
             '',
-            'Game controls:',
-            '+---+---+---+---+       +---+---+---+---+',
-            '| 1 | 2 | 3 | C |       | 1 | 2 | 3 | 4 |',
-            '+---+---+---+---+       +---+---+---+---+',
-            '| 4 | 5 | 6 | D |       | Q | W | E | R |',
-            '+---+---+---+---+  ---> +---+---+---+---+',
-            '| 7 | 8 | 9 | E |       | A | S | D | F |',
-            '+---+---+---+---+       +---+---+---+---+',
-            '| A | 0 | B | F |       | Z | X | C | V |',
-            '+---+---+---+---+       +---+---+---+---+',
+            '+---+---+---+---+        +---+---+---+---+',
+            '| 1 | 2 | 3 | C |   →    | 1 | 2 | 3 | 4 |',
+            '+---+---+---+---+        +---+---+---+---+',
+            '| 4 | 5 | 6 | D |   →    | Q | W | E | R |',
+            '+---+---+---+---+        +---+---+---+---+',
+            '| 7 | 8 | 9 | E |   →    | A | S | D | F |',
+            '+---+---+---+---+        +---+---+---+---+',
+            '| A | 0 | B | F |   →    | Z | X | C | V |',
+            '+---+---+---+---+        +---+---+---+---+',
         ]
 
 
