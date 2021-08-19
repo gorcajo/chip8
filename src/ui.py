@@ -61,6 +61,14 @@ class Panel(Drawable):
             chip8_pc=chip8.pc)
         self.drawables.append(memory_view)
 
+        index_view = IndexView(
+            screen=screen,
+            x=memory_view.right + MARGIN,
+            y=games_creen.top,
+            font=self.font,
+            chip8_index=chip8.index)
+        self.drawables.append(index_view)
+
         help_text = HelpText(
             screen=screen,
             x=MARGIN,
@@ -107,7 +115,7 @@ class GameScreen(Drawable):
 class MemoryView(Drawable):
 
     def __init__(self, screen: pygame.Surface, x: int, y: int, font: pygame.font, chip8_memory: chip8.Memory, chip8_pc: chip8.ProgramCounter) -> None:
-        super().__init__(screen, x, y)
+        super().__init__(screen, x, y, 320, 532)
 
         self.font = font
         self.chip8_memory = chip8_memory
@@ -118,7 +126,7 @@ class MemoryView(Drawable):
 
     def draw(self) -> None:
         lines = []
-        lines.append('  ADDR  DATA  MNEMONIC')
+        lines.append('  ADDR  DATA  MNEMONIC        ')
 
         for i in range(-self.addresses_to_show // 2 + 2, self.addresses_to_show // 2, 2):
             address = self.chip8_pc.address + i
@@ -137,16 +145,36 @@ class MemoryView(Drawable):
                 self.font.render(line, False, PRIMARY_COLOR),
                 (MARGIN + self.x, MARGIN + self.y + i * FONT_SIZE))
 
-        longest_line = max(lines, key=len)
-        longest_line_length = len(longest_line)
+        pygame.draw.rect(self.screen, PRIMARY_COLOR, pygame.Rect(self.x, self.y, self.w, self.h), 1)
 
-        rect = pygame.Rect(
-            self.x,
-            self.y,
-            longest_line_length * FONT_WIDTH + 2 * MARGIN,
-            len(lines) * FONT_SIZE + 2 * MARGIN)
 
-        pygame.draw.rect(self.screen, PRIMARY_COLOR, rect, 1)
+class IndexView(Drawable):
+
+    def __init__(self, screen: pygame.Surface, x: int, y: int, font: pygame.font, chip8_index: chip8.IndexRegister) -> None:
+        super().__init__(screen, x, y, 160, 52)
+
+        self.font = font
+        self.chip8_index = chip8_index
+
+
+    def draw(self) -> None:
+        lines = [
+            'Index register',
+            f'{to_hex(self.chip8_index.address, 4)}',
+        ]
+        
+        for i, line in enumerate(lines):
+            self.screen.blit(
+                self.font.render(line, False, PRIMARY_COLOR),
+                (MARGIN + self.x, MARGIN + self.y + i * FONT_SIZE))
+
+        # longest_line = max(lines, key=len)
+        # longest_line_length = len(longest_line)
+        # width = longest_line_length * FONT_WIDTH + 2 * MARGIN
+        # height = len(lines) * FONT_SIZE + 2 * MARGIN
+        # print(width, height)
+
+        pygame.draw.rect(self.screen, PRIMARY_COLOR, pygame.Rect(self.x, self.y, self.w, self.h), 1)
 
 
 class HelpText(Drawable):

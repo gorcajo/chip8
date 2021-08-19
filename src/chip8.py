@@ -7,7 +7,7 @@ class Chip8:
         self.memory = Memory(4096)
         self.display = Display(64, 32)
         self.pc = ProgramCounter()
-        self.i = IndexRegister()
+        self.index = IndexRegister()
         self.stack = Stack()
         self.delay_timer = DelayTimer()
         self.sound_timer = SoundTimer()
@@ -55,7 +55,7 @@ class Display:
         self.pixels[y][x] = False
 
 
-class ProgramCounter:
+class AddressRegister:
 
     def __init__(self) -> None:
         self._address: bytes = 0
@@ -66,18 +66,18 @@ class ProgramCounter:
         return self._address
 
 
-    def increment(self) -> int:
-        self._address += 1
-
-
     def set_to(self, new_address) -> int:
         self._address = new_address
 
 
-class IndexRegister:
+class ProgramCounter(AddressRegister):
 
-    def __init__(self) -> None:
-        pass
+    def increment(self) -> int:
+        self._address += 1
+
+
+class IndexRegister(AddressRegister):
+    pass
 
 
 class Stack:
