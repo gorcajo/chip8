@@ -135,6 +135,10 @@ class Registers:
         return self.registers[i]
 
 
+    def __len__(self):
+        return len(self.registers)
+
+
     @property
     def flag_register(self) -> int:
         return self.registers[-1]

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 import pygame
 
@@ -87,13 +87,21 @@ class Panel(Drawable):
             chip8_timer=chip8.delay_timer)
         self.drawables.append(sound_timer_view)
 
-        stack_view = StackView(
+        registers_view = RegistersView(
             screen=screen,
             x=memory_view.right + MARGIN,
             y=sound_timer_view.bottom + MARGIN,
             font=self.font,
+            chip8_registers=chip8.registers)
+        self.drawables.append(registers_view)
+
+        stack_view = StackView(
+            screen=screen,
+            x=memory_view.right + MARGIN,
+            y=registers_view.bottom + MARGIN,
+            font=self.font,
             chip8_stack=chip8.stack,
-            length=memory_view.h - sound_timer_view.bottom)
+            length=memory_view.h - registers_view.bottom)
         self.drawables.append(stack_view)
 
         help_text = HelpText(
@@ -189,19 +197,13 @@ class IndexView(Drawable):
     def draw(self) -> None:
         lines = [
             'Index register',
-            f'{to_hex(self.chip8_index.address, 4)}',
+            f' {to_hex(self.chip8_index.address, 4)}',
         ]
         
         for i, line in enumerate(lines):
             self.screen.blit(
                 self.font.render(line, False, PRIMARY_COLOR),
                 (MARGIN + self.x, MARGIN + self.y + i * FONT_SIZE))
-
-        # longest_line = max(lines, key=len)
-        # longest_line_length = len(longest_line)
-        # width = longest_line_length * FONT_WIDTH + 2 * MARGIN
-        # height = len(lines) * FONT_SIZE + 2 * MARGIN
-        # print(width, height)
 
         pygame.draw.rect(self.screen, PRIMARY_COLOR, pygame.Rect(self.x, self.y, self.w, self.h), 1)
 
@@ -227,19 +229,13 @@ class TimerView(Drawable):
     def draw(self) -> None:
         lines = [
             self.name,
-            f'{to_hex(self.chip8_timer.value, 2)}',
+            f' {to_hex(self.chip8_timer.value, 2)}',
         ]
         
         for i, line in enumerate(lines):
             self.screen.blit(
                 self.font.render(line, False, PRIMARY_COLOR),
                 (MARGIN + self.x, MARGIN + self.y + i * FONT_SIZE))
-
-        # longest_line = max(lines, key=len)
-        # longest_line_length = len(longest_line)
-        # width = longest_line_length * FONT_WIDTH + 2 * MARGIN
-        # height = len(lines) * FONT_SIZE + 2 * MARGIN
-        # print(width, height)
 
         pygame.draw.rect(self.screen, PRIMARY_COLOR, pygame.Rect(self.x, self.y, self.w, self.h), 1)
 
@@ -258,7 +254,36 @@ class StackView(Drawable):
         lines.append('Stack')
 
         for i in range(len(self.chip8_stack)):
-            lines.append(f'{to_hex(self.chip8_stack[i], 2)}')
+            lines.append(f' {to_hex(self.chip8_stack[i], 2)}')
+        
+        for i, line in enumerate(lines):
+            self.screen.blit(
+                self.font.render(line, False, PRIMARY_COLOR),
+                (MARGIN + self.x, MARGIN + self.y + i * FONT_SIZE))
+
+        pygame.draw.rect(self.screen, PRIMARY_COLOR, pygame.Rect(self.x, self.y, self.w, self.h), 1)
+
+
+class RegistersView(Drawable):
+
+    def __init__(self, screen: pygame.Surface, x: int, y: int, font: pygame.font, chip8_registers: chip8.Registers) -> None:
+        super().__init__(screen, x, y, 160, 164)
+
+        self.font = font
+        self.chip8_registers = chip8_registers
+
+
+    def draw(self) -> None:
+        lines = []
+        lines.append('Registers')
+
+        for i in range(len(self.chip8_registers) // 2):
+            j = i + len(self.chip8_registers) // 2
+
+            line = f' V{to_hex(i, 1)} {to_hex(self.chip8_registers[i], 2)}'
+            line += f'   V{to_hex(j, 1)} {to_hex(self.chip8_registers[j], 2)}'
+
+            lines.append(line)
         
         for i, line in enumerate(lines):
             self.screen.blit(
@@ -308,3 +333,11 @@ class HelpText(Drawable):
 
 def to_hex(num: int, min_digits: int) -> str:
     return ('0' * min_digits + format(num, 'x'))[-min_digits:].upper()
+
+
+def get_view_size(lines: List[str]) -> Tuple[int, int]:
+    longest_line = max(lines, key=len)
+    longest_line_length = len(longest_line)
+    width = longest_line_length * FONT_WIDTH + 2 * MARGIN
+    height = len(lines) * FONT_SIZE + 2 * MARGIN
+    return (width, height)
