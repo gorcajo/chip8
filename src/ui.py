@@ -163,9 +163,10 @@ class Panel(Drawable):
         text = ''
         text += 'CHIP-8 controls\n'
         text += '\n'
-        text += ' F1: Play/Pause\n'
-        text += ' F2: Step\n'
-        text += ' F3: Reset\n'
+        text += ' F1:  Play/Pause\n'
+        text += ' F2:  Step\n'
+        text += ' F3:  Reset\n'
+        text += ' ESC: Quit\n'
 
         interpreter_controls_label = Label(
             screen=screen,
