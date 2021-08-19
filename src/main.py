@@ -1,3 +1,4 @@
+import datetime
 from typing import List
 
 import pygame
@@ -11,10 +12,13 @@ PIXEL_OFF_COLOR = (0, 0, 0)
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
+MARGIN = 10
 SCREEN_GEOMETRY = (SCREEN_WIDTH, SCREEN_HEIGHT)
 BACKGROUND_COLOR = (40, 40, 40)
 FONT_FAMILY = 'monospace'
 FONT_SIZE = 12
+
+CHIP8_STEPS_PER_SECOND = 720
 
 
 class Engine:
@@ -28,25 +32,35 @@ class Engine:
         pygame.display.set_caption('CHIP-8 Interpreter')
 
         self.chip8 = chip8.Chip8()
-        self.init_drawables()
+        self.init_panel()
 
 
-    def init_drawables(self) -> None:
+    def init_panel(self) -> None:
         self.drawables: List[Drawable] = []
 
-        self.gamescreen = GameScreen(screen=self.screen, x=10, y=10, pixel_size=PIXEL_SIZE, chip8_display=self.chip8.display)
+        self.gamescreen = GameScreen(screen=self.screen, x=MARGIN, y=MARGIN, pixel_size=PIXEL_SIZE, chip8_display=self.chip8.display)
         self.drawables.append(self.gamescreen)
 
 
     def run(self) -> None:
         clock = pygame.time.Clock()
         self.running = True
+        step = 0
+
+        steps_per_frame = CHIP8_STEPS_PER_SECOND // 60
 
         while self.running:
-            self.manage_inputs()
+
+            if step % steps_per_frame == 0:
+                self.manage_inputs()
+            
             self.update()
-            self.draw()
-            clock.tick(60)
+            
+            if step % steps_per_frame == 0:
+                self.draw()
+
+            clock.tick(CHIP8_STEPS_PER_SECOND)
+            step += 1
 
 
     def manage_inputs(self) -> None:
