@@ -1,9 +1,10 @@
-from typing import List, Tuple
+from typing import List
 
 import pygame
 
 import chip8
 from constants import *
+from tools import *
 
 
 class Drawable:
@@ -346,15 +347,3 @@ class Label(Drawable):
     def draw(self) -> None:
         self.draw_text(self.lines)
         self.draw_frame()
-
-
-def to_hex(num: int, min_digits: int) -> str:
-    return ('0' * min_digits + format(num, 'x'))[-min_digits:].upper()
-
-
-def get_view_size(lines: List[str]) -> Tuple[int, int]:
-    longest_line = max(lines, key=len)
-    longest_line_length = len(longest_line)
-    width = longest_line_length * FONT_WIDTH + 2 * MARGIN
-    height = len(lines) * FONT_SIZE + 2 * MARGIN
-    return (width, height)

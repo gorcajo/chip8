@@ -1,5 +1,7 @@
 from typing import List
 
+from tools import *
+
 
 class Chip8:
 
@@ -38,15 +40,15 @@ class Chip8:
 class Instruction:
 
     def __init__(self, msb: int, lsb: int) -> None:
-        self.k = Nibble(msb >> 4)
-        self.x = Nibble(msb & 0x0f)
-        self.y = Nibble(lsb >> 4)
-        self.n = Nibble(lsb & 0x0f)
+        self.k = msb >> 4
+        self.x = msb & 0x0f
+        self.y = lsb >> 4
+        self.n = lsb & 0x0f
 
 
     @property
     def hex(self) -> str:
-        return f'{self.k.hex}{self.x.hex}{self.y.hex}{self.n.hex}'
+        return f'{to_hex(self.k, 1)}{to_hex(self.x, 1)}{to_hex(self.y, 1)}{to_hex(self.n, 1)}'
 
 
     def __str__(self) -> str:
@@ -207,31 +209,3 @@ class Registers:
     @property
     def flag_register(self) -> int:
         return self.registers[-1]
-
-
-class Nibble:
-
-    def __init__(self, value: int) -> None:
-        if type(value) != int:
-            raise ValueError(f'must be integer')
-        elif value < 0:
-            raise ValueError(f'must be non-negative integer')
-        elif value > 16:
-            raise ValueError(f'must be less than 16')
-
-        self._value = value
-
-
-    @property
-    def value(self) -> int:
-        return self._value
-
-
-    @property
-    def bin(self) -> str:
-        return str(bin(self._value)[2:]).zfill(4)
-
-
-    @property
-    def hex(self) -> str:
-        return ('0' + format(self._value, 'x'))[-1:].upper()
