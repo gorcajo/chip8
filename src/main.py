@@ -13,7 +13,6 @@ class Engine:
     def __init__(self) -> None:
         pygame.init()
         pygame.font.init()
-        self.font = pygame.font.SysFont(FONT_FAMILY, FONT_SIZE)
 
         self.screen = pygame.display.set_mode(SCREEN_GEOMETRY, 0, 32)
         pygame.display.set_caption('CHIP-8 Interpreter')

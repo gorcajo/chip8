@@ -4,7 +4,7 @@ from typing import List
 class Chip8:
 
     def __init__(self) -> None:
-        self.ram = Memory(4096)
+        self.memory = Memory(4096)
         self.display = Display(64, 32)
         self.pc = ProgramCounter()
         self.i = IndexRegister()
@@ -17,7 +17,12 @@ class Chip8:
 class Memory:
 
     def __init__(self, size: int) -> None:
-        self.addresses: bytes = [0] * size
+        self.size = size
+        self.addresses = [0] * size
+
+
+    def get_data_at(self, address: int) -> int:
+        return self.addresses[address]
 
 
     def __len__(self):
@@ -53,7 +58,20 @@ class Display:
 class ProgramCounter:
 
     def __init__(self) -> None:
-        pass
+        self._address: bytes = 0
+
+
+    @property
+    def address(self) -> int:
+        return self._address
+
+
+    def increment(self) -> int:
+        self._address += 1
+
+
+    def set_to(self, new_address) -> int:
+        self._address = new_address
 
 
 class IndexRegister:
