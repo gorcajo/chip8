@@ -69,6 +69,14 @@ class Panel(Drawable):
             chip8_index=chip8.index)
         self.drawables.append(index_view)
 
+        stack_view = StackView(
+            screen=screen,
+            x=memory_view.right + MARGIN,
+            y=index_view.bottom + MARGIN,
+            font=self.font,
+            chip8_stack=chip8.stack)
+        self.drawables.append(stack_view)
+
         help_text = HelpText(
             screen=screen,
             x=MARGIN,
@@ -173,6 +181,30 @@ class IndexView(Drawable):
         # width = longest_line_length * FONT_WIDTH + 2 * MARGIN
         # height = len(lines) * FONT_SIZE + 2 * MARGIN
         # print(width, height)
+
+        pygame.draw.rect(self.screen, PRIMARY_COLOR, pygame.Rect(self.x, self.y, self.w, self.h), 1)
+
+
+class StackView(Drawable):
+
+    def __init__(self, screen: pygame.Surface, x: int, y: int, font: pygame.font, chip8_stack: chip8.Stack) -> None:
+        super().__init__(screen, x, y, 160, 470)
+
+        self.font = font
+        self.chip8_stack = chip8_stack
+
+
+    def draw(self) -> None:
+        lines = []
+        lines.append('Stack')
+
+        for i in range(len(self.chip8_stack)):
+            lines.append(f'{to_hex(self.chip8_stack[i], 2)}')
+        
+        for i, line in enumerate(lines):
+            self.screen.blit(
+                self.font.render(line, False, PRIMARY_COLOR),
+                (MARGIN + self.x, MARGIN + self.y + i * FONT_SIZE))
 
         pygame.draw.rect(self.screen, PRIMARY_COLOR, pygame.Rect(self.x, self.y, self.w, self.h), 1)
 

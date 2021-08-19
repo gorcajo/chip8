@@ -66,7 +66,7 @@ class AddressRegister:
         return self._address
 
 
-    def set_to(self, new_address) -> int:
+    def set_to(self, new_address: int) -> int:
         self._address = new_address
 
 
@@ -83,7 +83,23 @@ class IndexRegister(AddressRegister):
 class Stack:
 
     def __init__(self) -> None:
-        pass
+        self.elements: List[int] = []
+
+
+    def push(self, element: int) -> None:
+        self.elements.append(element)
+
+
+    def pop(self) -> int:
+        return self.elements.pop()
+
+
+    def __len__(self):
+        return len(self.elements)
+
+
+    def __getitem__(self, i) -> int:
+        return self.elements[i]
 
 
 class Timer:
