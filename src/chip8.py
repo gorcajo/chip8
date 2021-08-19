@@ -37,10 +37,6 @@ class Memory:
         self.load(rom)
 
 
-    def get_data_at(self, address: int) -> int:
-        return self.addresses[address]
-
-
     def clear(self) -> None:
         self.addresses = [0] * self.size
 
@@ -54,6 +50,10 @@ class Memory:
 
     def __len__(self):
         return len(self.addresses)
+
+
+    def __getitem__(self, address) -> int:
+        return self.addresses[address]
 
 
 class Display:
@@ -82,56 +82,59 @@ class Display:
         self.pixels[y][x] = False
 
 
-class AddressRegister:
+class TwoBytesRegister:
 
     def __init__(self) -> None:
-        self._address: int = 0
+        self._value: int = 0
 
 
     @property
-    def address(self) -> int:
-        return self._address
+    def value(self) -> int:
+        return self._value
 
 
-    def set_to(self, new_address: int) -> int:
-        self._address = new_address
+    def set_to(self, new_value: int) -> int:
+        if new_value > 2**16:
+            raise ValueError('value cannot fit in 2 bytes')
+
+        self._value = new_value
 
 
-class ProgramCounter(AddressRegister):
+class ProgramCounter(TwoBytesRegister):
 
     def increment(self) -> int:
-        self._address += 2
+        self._value += 2
 
 
-class IndexRegister(AddressRegister):
+class IndexRegister(TwoBytesRegister):
     pass
 
 
 class Stack:
 
     def __init__(self) -> None:
-        self.elements: List[int] = None
+        self._elements: List[int] = None
         self.clear()
 
 
     def push(self, element: int) -> None:
-        self.elements.append(element)
+        self._elements.append(element)
 
 
     def pop(self) -> int:
-        return self.elements.pop()
+        return self._elements.pop()
 
 
     def clear(self) -> None:
-        self.elements = []
+        self._elements = []
 
 
     def __len__(self):
-        return len(self.elements)
+        return len(self._elements)
 
 
     def __getitem__(self, i) -> int:
-        return self.elements[i]
+        return self._elements[i]
 
 
 class Timer:

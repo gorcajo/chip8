@@ -240,13 +240,13 @@ class MemoryView(Drawable):
         lines.append('  ADDR  DATA  MNEMONIC        ')
 
         for i in range(-self.addresses_to_show // 2 + 2, self.addresses_to_show // 2, 2):
-            address = self.chip8_pc.address + i
+            address = self.chip8_pc.value + i
 
             if address < 0:
                 address += self.chip8_memory.size
 
-            first_byte = self.chip8_memory .get_data_at(address)
-            second_byte = self.chip8_memory .get_data_at(address + 1)
+            first_byte = self.chip8_memory[address]
+            second_byte = self.chip8_memory[address + 1]
 
             marker = '→' if i == 0 else ' '
             lines.append(f'{marker}  {to_hex(address, 3)}  {to_hex(first_byte, 2)}{to_hex(second_byte, 2)}')
@@ -265,7 +265,7 @@ class IndexView(Drawable):
     def draw(self) -> None:
         lines = [
             'Index register',
-            f' {to_hex(self.chip8_index.address, 4)}',
+            f' {to_hex(self.chip8_index.value, 4)}',
         ]
 
         self.draw_text(lines)
