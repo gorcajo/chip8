@@ -108,6 +108,15 @@ class Timer:
         self.register = 0
 
 
+    def set_value(self, new_value: int) -> None:
+        self.register = new_value
+
+
+    @property
+    def value(self) -> None:
+        return self.register
+
+
 class DelayTimer(Timer):
     pass
 

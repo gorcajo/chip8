@@ -69,12 +69,31 @@ class Panel(Drawable):
             chip8_index=chip8.index)
         self.drawables.append(index_view)
 
-        stack_view = StackView(
+        delay_timer_view = TimerView(
             screen=screen,
             x=memory_view.right + MARGIN,
             y=index_view.bottom + MARGIN,
             font=self.font,
-            chip8_stack=chip8.stack)
+            name='Delay Timer',
+            chip8_timer=chip8.delay_timer)
+        self.drawables.append(delay_timer_view)
+
+        sound_timer_view = TimerView(
+            screen=screen,
+            x=memory_view.right + MARGIN,
+            y=delay_timer_view.bottom + MARGIN,
+            font=self.font,
+            name='Sound Timer',
+            chip8_timer=chip8.delay_timer)
+        self.drawables.append(sound_timer_view)
+
+        stack_view = StackView(
+            screen=screen,
+            x=memory_view.right + MARGIN,
+            y=sound_timer_view.bottom + MARGIN,
+            font=self.font,
+            chip8_stack=chip8.stack,
+            length=memory_view.h - sound_timer_view.bottom)
         self.drawables.append(stack_view)
 
         help_text = HelpText(
@@ -185,10 +204,48 @@ class IndexView(Drawable):
         pygame.draw.rect(self.screen, PRIMARY_COLOR, pygame.Rect(self.x, self.y, self.w, self.h), 1)
 
 
+class TimerView(Drawable):
+
+    def __init__(
+        self,
+        screen: pygame.Surface,
+        x: int,
+        y: int,
+        font: pygame.font,
+        name: str,
+        chip8_timer: chip8.DelayTimer) -> None:
+
+        super().__init__(screen, x, y, 160, 52)
+
+        self.font = font
+        self.name = name
+        self.chip8_timer = chip8_timer
+
+
+    def draw(self) -> None:
+        lines = [
+            self.name,
+            f'{to_hex(self.chip8_timer.value, 2)}',
+        ]
+        
+        for i, line in enumerate(lines):
+            self.screen.blit(
+                self.font.render(line, False, PRIMARY_COLOR),
+                (MARGIN + self.x, MARGIN + self.y + i * FONT_SIZE))
+
+        # longest_line = max(lines, key=len)
+        # longest_line_length = len(longest_line)
+        # width = longest_line_length * FONT_WIDTH + 2 * MARGIN
+        # height = len(lines) * FONT_SIZE + 2 * MARGIN
+        # print(width, height)
+
+        pygame.draw.rect(self.screen, PRIMARY_COLOR, pygame.Rect(self.x, self.y, self.w, self.h), 1)
+
+
 class StackView(Drawable):
 
-    def __init__(self, screen: pygame.Surface, x: int, y: int, font: pygame.font, chip8_stack: chip8.Stack) -> None:
-        super().__init__(screen, x, y, 160, 470)
+    def __init__(self, screen: pygame.Surface, x: int, y: int, font: pygame.font, chip8_stack: chip8.Stack, length: int) -> None:
+        super().__init__(screen, x, y, 160, length)
 
         self.font = font
         self.chip8_stack = chip8_stack
