@@ -4,6 +4,7 @@ from typing import List
 import sys
 
 import pygame
+from pygame.event import Event
 
 import chip8
 from constants import *
@@ -73,7 +74,10 @@ class Engine:
 
     def update(self) -> None:
         if self.last_event is not None:
-            print(self.last_event)
+            if self.last_event == Event.KEY_STEP:
+                self.chip8.step()
+            if self.last_event == Event.KEY_RESET:
+                self.chip8.reset()
 
 
     def draw(self) -> None:

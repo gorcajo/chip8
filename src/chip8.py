@@ -13,6 +13,22 @@ class Chip8:
         self.sound_timer = SoundTimer()
         self.registers = Registers(16)
 
+        self.reset()
+
+
+    def reset(self) -> None:
+        self.display.clear()
+        self.pc.set_to(0)
+        self.index.set_to(0)
+        self.stack.clear()
+        self.delay_timer.set_value(0)
+        self.sound_timer.set_value(0)
+        self.registers.clear()
+
+
+    def step(self) -> None:
+        self.pc.increment()
+
 
 class Memory:
 
@@ -69,7 +85,7 @@ class Display:
 class AddressRegister:
 
     def __init__(self) -> None:
-        self._address: bytes = 0
+        self._address: int = 0
 
 
     @property
@@ -84,7 +100,7 @@ class AddressRegister:
 class ProgramCounter(AddressRegister):
 
     def increment(self) -> int:
-        self._address += 1
+        self._address += 2
 
 
 class IndexRegister(AddressRegister):
@@ -94,7 +110,8 @@ class IndexRegister(AddressRegister):
 class Stack:
 
     def __init__(self) -> None:
-        self.elements: List[int] = []
+        self.elements: List[int] = None
+        self.clear()
 
 
     def push(self, element: int) -> None:
@@ -103,6 +120,10 @@ class Stack:
 
     def pop(self) -> int:
         return self.elements.pop()
+
+
+    def clear(self) -> None:
+        self.elements = []
 
 
     def __len__(self):
@@ -139,7 +160,13 @@ class SoundTimer(Timer):
 class Registers:
 
     def __init__(self, count: int) -> None:
-        self.registers = [0 for i in range(count)]
+        self.count = count
+        self.registers: List[int] = None
+        self.clear()
+
+
+    def clear(self) -> None:
+        self.registers = [0 for i in range(self.count)]
 
 
     def __getitem__(self, i) -> int:
