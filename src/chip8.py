@@ -84,87 +84,87 @@ class Instruction:
 
 
     @property
-    def description(self) -> str:
+    def asm(self) -> str:
         if self._k == 0x0:
             if self._x == 0x0 and self._y == 0xe and self._n == 0x0:
-                return f'clear screen'
+                return f'clr'
             elif self._x == 0x0 and self._y == 0xe and self._n == 0xe:
-                return f'return'
+                return f'ret'
             else:
-                return f''
+                return f'mch {self.nnn}'
         elif self._k == 0x1:
-            return f'jump to {self.nnn}'
+            return f'jmp {self.nnn}'
         elif self._k == 0x2:
             return f'call {self.nnn}'
         elif self._k == 0x3:
-            return f'skip if V{self.x} == {self.nn}'
+            return f'jeq v{self.x} {self.nn}'
         elif self._k == 0x4:
-            return f'skip if V{self.x} != {self.nn}'
+            return f'jneq v{self.x} {self.nn}'
         elif self._k == 0x5 and self._n == 0x0:
-            return f'skip if V{self.x} == V{self.y}'
+            return f'jeq v{self.x} v{self.y}'
         elif self._k == 0x6:
-            return f'V{self.x} = {self.nn}'
+            return f'mov v{self.x} {self.nn}'
         elif self._k == 0x7:
-            return f'V{self.x} += {self.nn} (no carry)'
+            return f'addnc v{self.x} {self.nn}'
         elif self._k == 0x8:
             if self._n == 0x0:
-                return f'V{self.x} = V{self.y}'
+                return f'mov v{self.x} v{self.y}'
             elif self._n == 0x1:
-                return f'V{self.x} = V{self.x} | V{self.y}'
+                return f'or v{self.x} v{self.y}'
             elif self._n == 0x2:
-                return f'V{self.x} = V{self.x} & V{self.y}'
+                return f'and v{self.x} v{self.y}'
             elif self._n == 0x3:
-                return f'V{self.x} = V{self.x} ^ V{self.y}'
+                return f'xor v{self.x} v{self.y}'
             elif self._n == 0x4:
-                return f'V{self.x} += V{self.y}'
+                return f'add v{self.x} v{self.y}'
             elif self._n == 0x5:
-                return f'V{self.x} -= V{self.y}'
+                return f'sub v{self.x} v{self.y}'
             elif self._n == 0x6:
-                return f'V{self.x} >>= 1'
+                return f'rsh v{self.x}'
             elif self._n == 0x7:
-                return f'V{self.x} = V{self.y} - V{self.x}'
+                return f'subr v{self.y} v{self.x}'
             elif self._n == 0xe:
-                return f'V{self.x} <<= 1'
+                return f'lsh v{self.x}'
         elif self._k == 0x9 and self._n == 0x0:
-            return f'skip if V{self.x} != V{self.y}'
+            return f'jneq v{self.x} v{self.y}'
         elif self._k == 0xa:
-            return f'I = {self.nnn}'
+            return f'mov I {self.nnn}'
         elif self._k == 0xb:
-            return f'jump to V0 + {self.nnn}'
+            return f'jmpv0 {self.nnn}'
         elif self._k == 0xc:
-            return f'V{self.x} = rand(0, 15) & {self.nn}'
+            return f'rnd v{self.x} {self.nn}'
         elif self._k == 0xd:
-            return f'display at (V{self.x}, V{self.y})'
+            return f'draw v{self.x} v{self.y} {self.n}'
         elif self._k == 0xe:
             if self._y == 0x9 and self._n == 0xe:
-                return f'skip if get_key() == V{self.x}'
+                return f'jkey {self.x}'
             elif self._y == 0xa and self._n == 0x1:
-                return f'skip if get_key() != V{self.x}'
+                return f'jnkey v{self.x}'
         elif self._k == 0xf:
             if self._y == 0x0 and self._n == 0x7:
-                return f'V{self.x} = get_delay_timer()'
+                return f'gdly v{self.x}'
             elif self._y == 0x1 and self._n == 0x5:
-                return f'set_delay_timer(V{self.x})'
+                return f'sdly v{self.x}'
             elif self._y == 0x1 and self._n == 0x8:
-                return f'set_sound_timer(V{self.x})'
+                return f'ssdn v{self.x}'
             elif self._y == 0x1 and self._n == 0xe:
-                return f'I += V{self.x}'
+                return f'addnc I v{self.x}'
             elif self._y == 0x0 and self._n == 0xa:
-                return f'V{self.x} = get_key() (blocking)'
+                return f'wkey v{self.x}'
             elif self._y == 0x2 and self._n == 0x9:
-                return f'I = font_at(V{self.x})'
+                return f'font v{self.x}'
             elif self._y == 0x3 and self._n == 0x3:
-                return f'I* = to_bcd(V{self.x})'
+                return f'bcd v{self.x}'
             elif self._y == 0x5 and self._n == 0x5:
-                return f'reg_dump(Vx, &I)'
+                return f'dump v{self.x}'
             elif self._y == 0x6 and self._n == 0x5:
-                return f'reg_load(Vx, &I)'
+                return f'load v{self.x}'
 
         return '???'
 
 
     def __str__(self) -> str:
-        return f'{self.hex}: {self.description}'
+        return f'{self.hex}: {self.asm}'
 
 
 
