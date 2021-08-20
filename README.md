@@ -40,56 +40,65 @@ pipenv install --ignore-pipfile
 
 ## 5. Assembly
 
-I made my own assembly language based on CHIP-8's instruction set. I used it just for debugging:
+I made my own assembly language based on CHIP-8's instruction set. I used it just for debugging.
+
+An assembly instruction is composed by a mnemonic and by zero to three operands. An operand can be:
+
+- `I`: Index register.
+- `VX`: Register at the position `X` in the opcode.
+- `VY`: Register at the position `Y` in the opcode.
+- `#N`: Literal `N`.
+- `#NN`: Literal `NN`.
+- `#NN`: Literal `NNN`.
 
 ### 5.1. Display
 
-| Opcode | Assembly       | Description                                                           |
-| :----: | :------------- | :-------------------------------------------------------------------- |
-| `00E0` | `CLR`          | Clears screen                                                         |
-| `DXYN` | `DRAW VX VY N` | Draws the sprite pointed by `I` at (`X`, `Y`) with `N` bits of height |
+| Opcode | Assembly        | Description                                                           |
+| :----: | :-------------- | :-------------------------------------------------------------------- |
+| `00E0` | `CLR`           | Clears screen                                                         |
+| `DXYN` | `DRAW VX VY #N` | Draws the sprite pointed by `I` at (`X`, `Y`) with `N` bits of height |
 
 ### 5.2. Unconditional jumps
 
-| Opcode | Assembly    | Description               |
-| :----: | :---------- | :------------------------ |
-| `00EE` | `RET`       | Returns from subroutine   |
-| `1NNN` | `JMP NNN`   | Jumps to `NNN`            |
-| `2NNN` | `CALL NNN`  | Calls subroutine at `NNN` |
-| `BNNN` | `JMPV0 NNN` | Jumps to `NNN + V0`       |
+| Opcode | Assembly     | Description               |
+| :----: | :----------- | :------------------------ |
+| `00EE` | `RET`        | Returns from subroutine   |
+| `1NNN` | `JMP #NNN`   | Jumps to `NNN`            |
+| `2NNN` | `CALL #NNN`  | Calls subroutine at `NNN` |
+| `BNNN` | `JMPV0 #NNN` | Jumps to `NNN + V0`       |
 
 ### 5.3. Conditional jumps
 
-| Opcode | Assembly     | Description                          |
-| :----: | :----------- | :----------------------------------- |
-| `3XNN` | `JEQ VX NN`  | Skips next instruction if `VX == NN` |
-| `4XNN` | `JNEQ VX NN` | Skips next instruction if `VX != NN` |
-| `5XY0` | `JEQ VX VY`  | Skips next instruction if `VX == VY` |
-| `9XY0` | `JNEQ VX VY` | Skips next instruction if `VX != VY` |
+| Opcode | Assembly      | Description                          |
+| :----: | :------------ | :----------------------------------- |
+| `3XNN` | `JEQ VX #NN`  | Skips next instruction if `VX == NN` |
+| `4XNN` | `JNEQ VX #NN` | Skips next instruction if `VX != NN` |
+| `5XY0` | `JEQ VX VY`   | Skips next instruction if `VX == VY` |
+| `9XY0` | `JNEQ VX VY`  | Skips next instruction if `VX != VY` |
 
 ### 5.4. Assignments
 
-| Opcode | Assembly    | Description |
-| :----: | :---------- | :---------- |
-| `6XNN` | `MOV VX NN` | `VX = NN`   |
-| `8XY0` | `MOV VX VY` | `VX = VY`   |
-| `ANNN` | `MOV I NNN` | `I = NNN`   |
+| Opcode | Assembly     | Description |
+| :----: | :----------- | :---------- |
+| `6XNN` | `MOV VX #NN` | `VX = NN`   |
+| `8XY0` | `MOV VX VY`  | `VX = VY`   |
+| `ANNN` | `MOV I #NNN` | `I = NNN`   |
 
 ### 5.5. Arithemetics
 
-| Opcode | Assembly      | Description               |
-| :----: | :------------ | :------------------------ |
-| `7XNN` | `ADDNC VX NN` | `VX = VX + NN`, no carry  |
-| `8XY1` | `OR VX VY`    | `VX = VX or VY`, bitwise  |
-| `8XY2` | `AND VX VY`   | `VX = VX and VY`, bitwise |
-| `8XY3` | `XOR VX VY`   | `VX = VX xor VY`, bitwise |
-| `8XY4` | `ADD VX VY`   | `VX = VX + VY`            |
-| `8XY5` | `SUB VX VY`   | `VX = VX - VY`            |
-| `8XY6` | `RSH VX`      | `VX = VX >> 1`            |
-| `8XY7` | `SUBR VX VY`  | `Vx = VY - VX`            |
-| `8XYE` | `LSH VX`      | `VX = VX << 1`            |
-| `CXNN` | `RND VX NN`   | `VX = rand() & NN`        |
-| `FX1E` | `ADDNC I VX`  | `I = VX`, no carry        |
+| Opcode | Assembly       | Description               |
+| :----: | :------------- | :------------------------ |
+| `7XNN` | `ADDNC VX #NN` | `VX = VX + NN`, no carry  |
+| `8XY1` | `OR VX VY`     | `VX = VX or VY`, bitwise  |
+| `8XY2` | `AND VX VY`    | `VX = VX and VY`, bitwise |
+| `8XY3` | `XOR VX VY`    | `VX = VX xor VY`, bitwise |
+| `8XY4` | `ADD VX VY`    | `VX = VX + VY`            |
+| `8XY5` | `SUB VX VY`    | `VX = VX - VY`            |
+| `8XY6` | `RSH VX`       | `VX = VX >> 1`            |
+| `8XY7` | `SUBR VX VY`   | `Vx = VY - VX`            |
+| `8XYE` | `LSH VX`       | `VX = VX << 1`            |
+| `CXNN` | `RND VX #NN`   | `VX = rand() & NN`        |
+| `FX1E` | `ADDNC I VX`   | `I = VX`, no carry        |
 
 ### 5.6. Input
 
@@ -109,13 +118,13 @@ I made my own assembly language based on CHIP-8's instruction set. I used it jus
 
 ### 5.8. Misc
 
-| Opcode | Assembly  | Description                                                           |
-| :----: | :-------- | :-------------------------------------------------------------------- |
-| `0NNN` | `MCH NNN` | Executes machine code `NNN`                                           |
-| `FX29` | `FONT VX` | Sets `I` to the location of the sprite for the character in `VX`      |
-| `FX33` | `BCD VX`  | Stores `VX` as BCD at `I*`, `(I+1)*` and `(I+2)*`                     |
-| `FX55` | `DUMP VX` | Dumps `V0` to `VX` (inclusive) to memory addresses starting at `I*`   |
-| `FX65` | `LOAD VX` | Loads `V0` to `VX` (inclusive) from memory addresses starting at `I*` |
+| Opcode | Assembly   | Description                                                           |
+| :----: | :--------- | :-------------------------------------------------------------------- |
+| `0NNN` | `MCH #NNN` | Executes machine code `NNN`                                           |
+| `FX29` | `FONT VX`  | Sets `I` to the location of the sprite for the character in `VX`      |
+| `FX33` | `BCD VX`   | Stores `VX` as BCD at `I*`, `(I+1)*` and `(I+2)*`                     |
+| `FX55` | `DUMP VX`  | Dumps `V0` to `VX` (inclusive) to memory addresses starting at `I*`   |
+| `FX65` | `LOAD VX`  | Loads `V0` to `VX` (inclusive) from memory addresses starting at `I*` |
 
 ## 6. Extras
 

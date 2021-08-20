@@ -13,13 +13,13 @@ class Hexable:
 class Instruction(Hexable):
 
     def __init__(self, msb: int, lsb: int) -> None:
-        self._k = msb >> 4
-        self._x = msb & 0x0f
-        self._y = lsb >> 4
-        self._n = lsb & 0x0f
+        self.k = msb >> 4
+        self.x = msb & 0x0f
+        self.y = lsb >> 4
+        self.n = lsb & 0x0f
 
-        self._nn = lsb
-        self._nnn = (self._x << 8) + lsb
+        self.nn = lsb
+        self.nnn = (self.x << 8) + lsb
 
         self.mnemonic: Mnemonic = None
         self.operands: List[Operand] = []
@@ -31,166 +31,136 @@ class Instruction(Hexable):
         self.mnemonic = Mnemonic.UNKNOWN
         self.operands = []
 
-        if self._k == 0x0:
-            if self._x == 0x0 and self._y == 0xe and self._n == 0x0:
+        if self.k == 0x0:
+            if self.x == 0x0 and self.y == 0xe and self.n == 0x0:
                 self.mnemonic = Mnemonic.CLR
-            elif self._x == 0x0 and self._y == 0xe and self._n == 0xe:
+            elif self.x == 0x0 and self.y == 0xe and self.n == 0xe:
                 self.mnemonic = Mnemonic.RET
             else:
                 self.mnemonic = Mnemonic.MCH
-                self.operands.append(Operand(OperandType.LITERAL, self._nnn))
-        elif self._k == 0x1:
+                self.operands.append(Operand(OperandType.LITERAL, self.nnn, 3))
+        elif self.k == 0x1:
             self.mnemonic = Mnemonic.JMP
-            self.operands.append(Operand(OperandType.LITERAL, self._nnn))
-        elif self._k == 0x2:
+            self.operands.append(Operand(OperandType.LITERAL, self.nnn, 3))
+        elif self.k == 0x2:
             self.mnemonic = Mnemonic.CALL
-            self.operands.append(Operand(OperandType.LITERAL, self._nnn))
-        elif self._k == 0x3:
+            self.operands.append(Operand(OperandType.LITERAL, self.nnn, 3))
+        elif self.k == 0x3:
             self.mnemonic = Mnemonic.JEQ
-            self.operands.append(Operand(OperandType.REGISTER, self._x))
-            self.operands.append(Operand(OperandType.LITERAL, self._nn))
-        elif self._k == 0x4:
+            self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+            self.operands.append(Operand(OperandType.LITERAL, self.nn, 2))
+        elif self.k == 0x4:
             self.mnemonic = Mnemonic.JNEQ
-            self.operands.append(Operand(OperandType.REGISTER, self._x))
-            self.operands.append(Operand(OperandType.LITERAL, self._nn))
-        elif self._k == 0x5 and self._n == 0x0:
+            self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+            self.operands.append(Operand(OperandType.LITERAL, self.nn, 2))
+        elif self.k == 0x5 and self.n == 0x0:
             self.mnemonic = Mnemonic.JEQ
-            self.operands.append(Operand(OperandType.REGISTER, self._x))
-            self.operands.append(Operand(OperandType.REGISTER, self._y))
-        elif self._k == 0x6:
+            self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+            self.operands.append(Operand(OperandType.REGISTER, self.y, 1))
+        elif self.k == 0x6:
             self.mnemonic = Mnemonic.MOV
-            self.operands.append(Operand(OperandType.REGISTER, self._x))
-            self.operands.append(Operand(OperandType.LITERAL, self._nn))
-        elif self._k == 0x7:
+            self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+            self.operands.append(Operand(OperandType.LITERAL, self.nn, 2))
+        elif self.k == 0x7:
             self.mnemonic = Mnemonic.ADDNC
-            self.operands.append(Operand(OperandType.REGISTER, self._x))
-            self.operands.append(Operand(OperandType.LITERAL, self._nn))
-        elif self._k == 0x8:
-            if self._n == 0x0:
+            self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+            self.operands.append(Operand(OperandType.LITERAL, self.nn, 2))
+        elif self.k == 0x8:
+            if self.n == 0x0:
                 self.mnemonic = Mnemonic.MOV
-                self.operands.append(Operand(OperandType.REGISTER, self._x))
-                self.operands.append(Operand(OperandType.REGISTER, self._y))
-            elif self._n == 0x1:
+                self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+                self.operands.append(Operand(OperandType.REGISTER, self.y, 1))
+            elif self.n == 0x1:
                 self.mnemonic = Mnemonic.OR
-                self.operands.append(Operand(OperandType.REGISTER, self._x))
-                self.operands.append(Operand(OperandType.REGISTER, self._y))
-            elif self._n == 0x2:
+                self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+                self.operands.append(Operand(OperandType.REGISTER, self.y, 1))
+            elif self.n == 0x2:
                 self.mnemonic = Mnemonic.AND
-                self.operands.append(Operand(OperandType.REGISTER, self._x))
-                self.operands.append(Operand(OperandType.REGISTER, self._y))
-            elif self._n == 0x3:
+                self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+                self.operands.append(Operand(OperandType.REGISTER, self.y, 1))
+            elif self.n == 0x3:
                 self.mnemonic = Mnemonic.XOR
-                self.operands.append(Operand(OperandType.REGISTER, self._x))
-                self.operands.append(Operand(OperandType.REGISTER, self._y))
-            elif self._n == 0x4:
+                self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+                self.operands.append(Operand(OperandType.REGISTER, self.y, 1))
+            elif self.n == 0x4:
                 self.mnemonic = Mnemonic.ADD
-                self.operands.append(Operand(OperandType.REGISTER, self._x))
-                self.operands.append(Operand(OperandType.REGISTER, self._y))
-            elif self._n == 0x5:
+                self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+                self.operands.append(Operand(OperandType.REGISTER, self.y, 1))
+            elif self.n == 0x5:
                 self.mnemonic = Mnemonic.SUB
-                self.operands.append(Operand(OperandType.REGISTER, self._x))
-                self.operands.append(Operand(OperandType.REGISTER, self._y))
-            elif self._n == 0x6:
+                self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+                self.operands.append(Operand(OperandType.REGISTER, self.y, 1))
+            elif self.n == 0x6:
                 self.mnemonic = Mnemonic.RSH
-                self.operands.append(Operand(OperandType.REGISTER, self._x))
-            elif self._n == 0x7:
+                self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+            elif self.n == 0x7:
                 self.mnemonic = Mnemonic.SUBR
-                self.operands.append(Operand(OperandType.REGISTER, self._x))
-                self.operands.append(Operand(OperandType.REGISTER, self._y))
-            elif self._n == 0xe:
+                self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+                self.operands.append(Operand(OperandType.REGISTER, self.y, 1))
+            elif self.n == 0xe:
                 self.mnemonic = Mnemonic.LSH
-                self.operands.append(Operand(OperandType.REGISTER, self._x))
-        elif self._k == 0x9 and self._n == 0x0:
+                self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+        elif self.k == 0x9 and self.n == 0x0:
             self.mnemonic = Mnemonic.JNEQ
-            self.operands.append(Operand(OperandType.REGISTER, self._x))
-            self.operands.append(Operand(OperandType.REGISTER, self._y))
-        elif self._k == 0xa:
+            self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+            self.operands.append(Operand(OperandType.REGISTER, self.y, 1))
+        elif self.k == 0xa:
             self.mnemonic = Mnemonic.MOV
             self.operands.append(Operand(OperandType.INDEX))
-            self.operands.append(Operand(OperandType.LITERAL, self._nnn))
-        elif self._k == 0xb:
+            self.operands.append(Operand(OperandType.LITERAL, self.nnn, 3))
+        elif self.k == 0xb:
             self.mnemonic = Mnemonic.JMPV0
-            self.operands.append(Operand(OperandType.LITERAL, self._nnn))
-        elif self._k == 0xc:
+            self.operands.append(Operand(OperandType.LITERAL, self.nnn, 3))
+        elif self.k == 0xc:
             self.mnemonic = Mnemonic.RND
-            self.operands.append(Operand(OperandType.REGISTER, self._x))
-            self.operands.append(Operand(OperandType.LITERAL, self._nn))
-        elif self._k == 0xd:
+            self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+            self.operands.append(Operand(OperandType.LITERAL, self.nn, 2))
+        elif self.k == 0xd:
             self.mnemonic = Mnemonic.DRAW
-            self.operands.append(Operand(OperandType.REGISTER, self._x))
-            self.operands.append(Operand(OperandType.REGISTER, self._y))
-            self.operands.append(Operand(OperandType.LITERAL, self._n))
-        elif self._k == 0xe:
-            if self._y == 0x9 and self._n == 0xe:
+            self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+            self.operands.append(Operand(OperandType.REGISTER, self.y, 1))
+            self.operands.append(Operand(OperandType.LITERAL, self.n, 1))
+        elif self.k == 0xe:
+            if self.y == 0x9 and self.n == 0xe:
                 self.mnemonic = Mnemonic.JKEY
-                self.operands.append(Operand(OperandType.REGISTER, self._x))
-            elif self._y == 0xa and self._n == 0x1:
+                self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+            elif self.y == 0xa and self.n == 0x1:
                 self.mnemonic = Mnemonic.JNKEY
-                self.operands.append(Operand(OperandType.REGISTER, self._x))
-        elif self._k == 0xf:
-            if self._y == 0x0 and self._n == 0x7:
+                self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+        elif self.k == 0xf:
+            if self.y == 0x0 and self.n == 0x7:
                 self.mnemonic = Mnemonic.GDLY
-                self.operands.append(Operand(OperandType.REGISTER, self._x))
-            elif self._y == 0x1 and self._n == 0x5:
+                self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+            elif self.y == 0x1 and self.n == 0x5:
                 self.mnemonic = Mnemonic.SDLY
-                self.operands.append(Operand(OperandType.REGISTER, self._x))
-            elif self._y == 0x1 and self._n == 0x8:
+                self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+            elif self.y == 0x1 and self.n == 0x8:
                 self.mnemonic = Mnemonic.SSND
-                self.operands.append(Operand(OperandType.REGISTER, self._x))
-            elif self._y == 0x1 and self._n == 0xe:
+                self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+            elif self.y == 0x1 and self.n == 0xe:
                 self.mnemonic = Mnemonic.ADDNC
                 self.operands.append(Operand(OperandType.INDEX))
-                self.operands.append(Operand(OperandType.REGISTER, self._x))
-            elif self._y == 0x0 and self._n == 0xa:
+                self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+            elif self.y == 0x0 and self.n == 0xa:
                 self.mnemonic = Mnemonic.WKEY
-                self.operands.append(Operand(OperandType.REGISTER, self._x))
-            elif self._y == 0x2 and self._n == 0x9:
+                self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+            elif self.y == 0x2 and self.n == 0x9:
                 self.mnemonic = Mnemonic.FONT
-                self.operands.append(Operand(OperandType.REGISTER, self._x))
-            elif self._y == 0x3 and self._n == 0x3:
+                self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+            elif self.y == 0x3 and self.n == 0x3:
                 self.mnemonic = Mnemonic.BCD
-                self.operands.append(Operand(OperandType.REGISTER, self._x))
-            elif self._y == 0x5 and self._n == 0x5:
+                self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+            elif self.y == 0x5 and self.n == 0x5:
                 self.mnemonic = Mnemonic.DUMP
-                self.operands.append(Operand(OperandType.REGISTER, self._x))
-            elif self._y == 0x6 and self._n == 0x5:
+                self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
+            elif self.y == 0x6 and self.n == 0x5:
                 self.mnemonic = Mnemonic.LOAD
-                self.operands.append(Operand(OperandType.REGISTER, self._x))
+                self.operands.append(Operand(OperandType.REGISTER, self.x, 1))
 
 
     @property
     def hex(self) -> str:
-        return f'{to_hex(self._k, 1)}{to_hex(self._x, 1)}{to_hex(self._y, 1)}{to_hex(self._n, 1)}'
-
-
-    @property
-    def k(self) -> str:
-        return f'{to_hex(self._k, 1)}'
-
-
-    @property
-    def x(self) -> str:
-        return f'{to_hex(self._x, 1)}'
-
-
-    @property
-    def y(self) -> str:
-        return f'{to_hex(self._y, 1)}'
-
-
-    @property
-    def n(self) -> str:
-        return f'{to_hex(self._n, 1)}'
-
-
-    @property
-    def nn(self) -> str:
-        return f'{to_hex(self._y, 1)}{to_hex(self._n, 1)}'
-
-
-    @property
-    def nnn(self) -> str:
-        return f'{to_hex(self._x, 1)}{to_hex(self._y, 1)}{to_hex(self._n, 1)}'
+        return f'{to_hex(self.k, 1)}{to_hex(self.x, 1)}{to_hex(self.y, 1)}{to_hex(self.n, 1)}'
 
 
     @property
@@ -204,7 +174,7 @@ class Instruction(Hexable):
 
         for operand in self.operands:
             if operand.type == OperandType.LITERAL:
-                assembly_line += ' ' + operand.hex
+                assembly_line += ' #' + operand.hex
             if operand.type == OperandType.REGISTER:
                 assembly_line += ' V' + operand.hex
             if operand.type == OperandType.INDEX:
@@ -214,7 +184,7 @@ class Instruction(Hexable):
 
 
     def __str__(self) -> str:
-        return f'Instruction({self.hex}, "{self.asm}")'
+        return f'Instruction(0x{self.hex}, "{self.asm}")'
 
 
 class Mnemonic(Enum):
@@ -259,9 +229,16 @@ class OperandType(Enum):
 
 class Operand(Hexable):
 
-    def __init__(self, operand_type: OperandType, value: int = None) -> None:
+    def __init__(self, operand_type: OperandType, value: int = None, nibbles: int = None) -> None:
         self.type = operand_type
+
+        if value is None and nibbles is not None:
+            raise ValueError('You must specify a value')
+        elif value is not None and nibbles is None:
+            raise ValueError('You must specify a nibble count')
+
         self.value = value
+        self.nibbles = nibbles
 
 
     @property
@@ -269,11 +246,4 @@ class Operand(Hexable):
         if self.type == OperandType.INDEX:
             return ''
 
-        if self.value < 16:
-            return to_hex(self.value, 1)
-        elif self.value < 256:
-            return to_hex(self.value, 2)
-        elif self.value < 4096:
-            return to_hex(self.value, 4)
-        else:
-            raise ValueError('Operand is too large')
+        return to_hex(self.value, self.nibbles)
