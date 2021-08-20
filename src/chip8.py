@@ -11,7 +11,7 @@ class Chip8:
     def __init__(self, rom: Rom) -> None:
         self.memory = Memory(4096, rom)
         self.display = Display(64, 32)
-        self.pc = ProgramCounter()
+        self.pc = ProgramCounter(4096)
         self.index = IndexRegister()
         self.stack = Stack()
         self.delay_timer = DelayTimer()
@@ -144,7 +144,7 @@ class Memory:
 
 
     def __getitem__(self, address) -> int:
-        return self.addresses[address]
+        return self.addresses[address % self.size]
 
 
 class Display:
@@ -208,8 +208,13 @@ class OneByteRegister(Register):
 
 class ProgramCounter(TwoBytesRegister):
 
+    def __init__(self, memory_size: int) -> None:
+        super().__init__()
+        self.memory_size = memory_size
+
     def increment(self) -> int:
         self._value += 2
+        self._value %= self.memory_size
 
 
 class IndexRegister(TwoBytesRegister):
