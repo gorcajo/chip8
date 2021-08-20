@@ -159,9 +159,9 @@ There is no labels, named constants, expresions or anything else (maybe in the f
 | :----: | :-------------- | :---: |
 | `0NNN` | `MCH #NNN`      |   ✅   |
 | `00E0` | `CLR`           |   ✅   |
-| `00EE` | `RET`           |   ❌   |
+| `00EE` | `RET`           |   ✅   |
 | `1NNN` | `JMP #NNN`      |   ✅   |
-| `2NNN` | `CALL #NNN`     |   ❌   |
+| `2NNN` | `CALL #NNN`     |   ✅   |
 | `3XNN` | `JEQ VX #NN`    |   ❌   |
 | `4XNN` | `JNEQ VX #NN`   |   ❌   |
 | `5XY0` | `JEQ VX VY`     |   ❌   |
