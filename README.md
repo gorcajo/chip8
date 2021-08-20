@@ -38,9 +38,9 @@ pipenv install --ignore-pipfile
 ./run.sh relative/path/to/your/game.ch8
 ```
 
-## 5. Assembly
+## 5. Instruction set
 
-I made my own assembly language based on CHIP-8's instruction set. I used it just for debugging.
+I made a simple assembly language based on CHIP-8's instruction set, just for debugging, classifying opcodes and organize my work. Although there is already another simple assembly language in the Cowgod's reference, in my humble opinion I think it's harder.
 
 An assembly instruction is composed by a mnemonic and by zero to three operands. An operand can be:
 
@@ -50,6 +50,8 @@ An assembly instruction is composed by a mnemonic and by zero to three operands.
 - `#N`: Hexadecimal literal `N`.
 - `#NN`: Hexadecimal literal `NN`.
 - `#NNN`: Hexadecimal literal `NNN`.
+
+There is no labels, named constants, expresions or anything else (maybe in the future?).
 
 ### 5.1. Display
 
