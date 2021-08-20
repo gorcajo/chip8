@@ -13,7 +13,7 @@ import ui
 
 class Engine:
 
-    def __init__(self, rom_filepath: str) -> None:
+    def __init__(self, rom: chip8.Rom) -> None:
         pygame.init()
         pygame.font.init()
 
@@ -22,23 +22,8 @@ class Engine:
 
         self.last_event: Event = None
 
-        rom = self.load_rom(rom_filepath)
-
         self.chip8 = chip8.Chip8(rom)
         self.panel = ui.Panel(self.screen, self.chip8)
-
-
-    def load_rom(self, rom_filepath: str) -> bytes:
-        if rom_filepath is None:
-            return []
-
-        with open(rom_filepath, 'rb') as rom_file:
-            rom = []
-
-            while byte := rom_file.read(1):
-                rom.append(byte[0])
-
-            return rom
 
 
     def run(self) -> None:
@@ -132,9 +117,7 @@ CONTROLS_MAP = {
 
 if __name__ == '__main__':
     rom_filepath = sys.argv[1] if len(sys.argv) > 1 else None
+    rom = chip8.Rom(rom_filepath)
 
-    if rom_filepath is not None and not os.path.isfile(rom_filepath):
-        rom_filepath = None
-
-    engine = Engine(rom_filepath)
+    engine = Engine(rom)
     engine.run()

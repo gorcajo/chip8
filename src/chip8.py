@@ -1,3 +1,5 @@
+from __future__ import annotations
+import os
 from typing import List
 
 from tools import *
@@ -5,7 +7,7 @@ from tools import *
 
 class Chip8:
 
-    def __init__(self, rom: List[int]) -> None:
+    def __init__(self, rom: Rom) -> None:
         self.memory = Memory(4096, rom)
         self.display = Display(64, 32)
         self.pc = ProgramCounter()
@@ -168,7 +170,7 @@ class Instruction:
 
 class Memory:
 
-    def __init__(self, size: int, rom: List[int]) -> None:
+    def __init__(self, size: int, rom: Rom) -> None:
         self.size = size
         self.load(rom)
 
@@ -177,10 +179,10 @@ class Memory:
         self.addresses = [0] * self.size
 
 
-    def load(self, data: List[int]) -> None:
+    def load(self, rom: Rom) -> None:
         self.clear()
 
-        for i, byte in enumerate(data):
+        for i, byte in enumerate(rom.data):
             self.addresses[i] = byte
 
 
@@ -319,3 +321,21 @@ class Registers:
     @property
     def flag_register(self) -> int:
         return self.registers[-1]
+
+
+class Rom:
+
+    def __init__(self, filepath: str) -> None:
+        self.data: List[int] = []
+        
+        if filepath is None:
+            return
+        elif not os.path.isfile(filepath):
+            filepath = None
+            return
+        else:
+            with open(filepath, 'rb') as rom_file:
+                self.data = []
+
+                while byte := rom_file.read(1):
+                    self.data.append(byte[0])
