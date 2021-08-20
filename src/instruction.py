@@ -19,7 +19,7 @@ class Instruction(Hexable):
         self.n = lsb & 0x0f
 
         self.nn = lsb
-        self.nnn = (self.x << 8) + lsb
+        self.nnn = (self.x << 8) | lsb
 
         self.mnemonic: Mnemonic = None
         self.operands: List[Operand] = []

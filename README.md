@@ -47,9 +47,9 @@ An assembly instruction is composed by a mnemonic and by zero to three operands.
 - `I`: Index register.
 - `VX`: Register at the position `X` in the opcode.
 - `VY`: Register at the position `Y` in the opcode.
-- `#N`: Literal `N`.
-- `#NN`: Literal `NN`.
-- `#NN`: Literal `NNN`.
+- `#N`: Hexadecimal literal `N`.
+- `#NN`: Hexadecimal literal `NN`.
+- `#NNN`: Hexadecimal literal `NNN`.
 
 ### 5.1. Display
 
@@ -128,5 +128,7 @@ An assembly instruction is composed by a mnemonic and by zero to three operands.
 
 ## 6. Extras
 
-- Info on CHIP-8: <https://en.wikipedia.org/wiki/CHIP-8>
+- Wikipedia: <https://en.wikipedia.org/wiki/CHIP-8>
+- Cowgod's tech reference: <http://devernay.free.fr/hacks/chip8/C8TECH10.HTM>
 - ROMs: <https://johnearnest.github.io/chip8Archive/?sort=platform>
+- ROM pack: <https://web.archive.org/web/20130903155600/http://chip8.com/?page=109>

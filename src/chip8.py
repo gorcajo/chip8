@@ -2,7 +2,8 @@ from __future__ import annotations
 import os
 from typing import List
 
-from instruction import Instruction
+from instruction import Instruction, Mnemonic, OperandType
+from tools import *
 
 
 class Chip8:
@@ -21,8 +22,11 @@ class Chip8:
 
 
     def reset(self) -> None:
+        self.memory.configure_font()
+        self.memory.load_rom()
+
         self.display.clear()
-        self.pc.set_to(0)
+        self.pc.set_to(self.memory.bytes_reserved)
         self.index.set_to(0)
         self.stack.clear()
         self.delay_timer.set_value(0)
@@ -31,30 +35,108 @@ class Chip8:
 
 
     def step(self) -> None:
-        address = self.pc.value
-        instruction = Instruction(self.memory[address], self.memory[address+1])
+        # Fetch:
 
+        address = self.pc.value
         self.pc.increment()
 
-        print(instruction) # TODO
+        # Decode:
+
+        instruction = Instruction(self.memory[address], self.memory[address+1])
+
+        # Execute:
+
+        if instruction.mnemonic == Mnemonic.CLR:
+            self.display.clear()
+
+        elif instruction.mnemonic == Mnemonic.JMP:
+            self.pc.set_to(instruction.operands[0].value)
+
+        elif instruction.mnemonic == Mnemonic.MOV:
+            target = instruction.operands[0]
+            source = instruction.operands[1]
+
+            if target.type == OperandType.REGISTER:
+                if source.type == OperandType.LITERAL:
+                    self.registers[target.value].set_to(source.value)
+                elif source.type == OperandType.REGISTER:
+                    pass # TODO
+                else:
+                    raise ValueError('Illegal instruction')
+
+            elif target.type == OperandType.INDEX and source.type == OperandType.LITERAL:
+                self.index.set_to(source.value)
+
+            else:
+                raise ValueError('Illegal instruction')
+
+        elif instruction.mnemonic == Mnemonic.ADDNC:
+            target = instruction.operands[0]
+            source = instruction.operands[1]
+
+            if target.type == OperandType.REGISTER and source.type == OperandType.LITERAL:
+                register_content = self.registers[target.value].value
+                self.registers[target.value].set_to(register_content + source.value)
+            elif target.type == OperandType.INDEX and source.type == OperandType.REGISTER:
+                pass # TODO
+            else:
+                raise ValueError('Illegal instruction')
+
+        elif instruction.mnemonic == Mnemonic.DRAW:
+            vx = instruction.operands[0]
+            vy = instruction.operands[1]
+            literal_n = instruction.operands[2]
+
+            x = self.registers[vx.value].value % self.display.width
+            y = self.registers[vy.value].value % self.display.height
+            height = literal_n.value
+
+            self.registers.turn_off_flag()
+
+            for row in range(height):
+                byte = self.memory[self.index.value + row]
+                bits = byte_to_bool_list(byte)
+
+                for col, bit in enumerate(bits):
+                    if bit:
+                        if self.display.get_pixel_at(x + col, y + row):
+                            self.display.turn_off_pixel_at(x + col, y + row)
+                            self.registers.turn_on_flag()
+                        else:
+                            self.display.turn_on_pixel_at(x + col, y + row)
+
+                    if (x + col) >= self.display.width:
+                        break
+
+                if (y + row) >= self.display.height:
+                    break
 
 
 class Memory:
 
     def __init__(self, size: int, rom: Rom) -> None:
         self.size = size
-        self.load(rom)
+        self.rom = rom
+
+        self.bytes_reserved = 0x200
+
+        self.configure_font()
+        self.load_rom()
 
 
     def clear(self) -> None:
         self.addresses = [0] * self.size
 
 
-    def load(self, rom: Rom) -> None:
+    def configure_font(self) -> None:
+        pass # TODO
+
+
+    def load_rom(self) -> None:
         self.clear()
 
-        for i, byte in enumerate(rom.data):
-            self.addresses[i] = byte
+        for i, byte in enumerate(self.rom.data):
+            self.addresses[i + self.bytes_reserved] = byte
 
 
     def __len__(self):
@@ -67,16 +149,16 @@ class Memory:
 
 class Display:
 
-    def __init__(self, pixels_width: int, pixels_height: int) -> None:
-        self.pixels_width = pixels_width
-        self.pixels_height = pixels_height
+    def __init__(self, width: int, height: int) -> None:
+        self.width = width
+        self.height = height
         self.pixels: List[List[bool]] = None
 
         self.clear()
 
 
     def clear(self) -> None:
-        self.pixels = [[False for i in range(self.pixels_width)] for i in range(self.pixels_height)]
+        self.pixels = [[False for i in range(self.width)] for i in range(self.height)]
 
 
     def get_pixel_at(self, x: int, y: int) -> bool:
@@ -91,7 +173,7 @@ class Display:
         self.pixels[y][x] = False
 
 
-class TwoBytesRegister:
+class Register:
 
     def __init__(self) -> None:
         self._value: int = 0
@@ -103,8 +185,23 @@ class TwoBytesRegister:
 
 
     def set_to(self, new_value: int) -> int:
+        raise NotImplementedError()
+
+
+class TwoBytesRegister(Register):
+
+    def set_to(self, new_value: int) -> int:
         if new_value > 2**16:
             raise ValueError('value cannot fit in 2 bytes')
+
+        self._value = new_value
+
+
+class OneByteRegister(Register):
+
+    def set_to(self, new_value: int) -> int:
+        if new_value > 2**8:
+            raise ValueError('value cannot fit in 1 byte')
 
         self._value = new_value
 
@@ -173,15 +270,23 @@ class Registers:
 
     def __init__(self, count: int) -> None:
         self.count = count
-        self.registers: List[int] = None
+        self.registers: List[OneByteRegister] = None
         self.clear()
 
 
     def clear(self) -> None:
-        self.registers = [0 for i in range(self.count)]
+        self.registers = [OneByteRegister() for _ in range(self.count)]
 
 
-    def __getitem__(self, i) -> int:
+    def turn_on_flag(self) -> None:
+        self.registers[0xf].set_to(0xff)
+
+
+    def turn_off_flag(self) -> None:
+        self.registers[0xf].set_to(0x00)
+
+
+    def __getitem__(self, i) -> OneByteRegister:
         return self.registers[i]
 
 

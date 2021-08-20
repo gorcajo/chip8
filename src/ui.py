@@ -187,15 +187,16 @@ class Panel(Drawable):
 
 class GameScreen(Drawable):
 
-    def __init__(self, screen: pygame.Surface, x: int, y: int, pixel_size: int, chip8_display: chip8.Display) -> None:
-        super().__init__(screen=screen, x=x, y=y, w=chip8_display.pixels_width * pixel_size, h=chip8_display.pixels_height * pixel_size)
+    def __init__(self, screen: pygame.Surface, x: int, y: int, pixel_size: int, chip8_display: chip8.Display, grid: bool = False) -> None:
+        super().__init__(screen=screen, x=x, y=y, w=chip8_display.width * pixel_size, h=chip8_display.height * pixel_size)
         self.pixel_size = pixel_size
         self.chip8_display = chip8_display
+        self.grid = grid
 
 
     def draw(self) -> None:
-        for y in range(self.chip8_display.pixels_height):
-            for x in range(self.chip8_display.pixels_width):
+        for y in range(self.chip8_display.height):
+            for x in range(self.chip8_display.width):
                 rect = pygame.Rect(
                     self.x + x * self.pixel_size,
                     self.y + y * self.pixel_size,
@@ -209,10 +210,31 @@ class GameScreen(Drawable):
         rect = pygame.Rect(
             self.x,
             self.y,
-            self.chip8_display.pixels_width * self.pixel_size,
-            self.chip8_display.pixels_height * self.pixel_size)
+            self.chip8_display.width * self.pixel_size,
+            self.chip8_display.height * self.pixel_size)
+
+        if self.grid:
+            self.draw_grid()
 
         self.draw_frame()
+
+
+    def draw_grid(self) -> None:
+        color = SECONDARY_COLOR
+
+        for y in range(1, self.chip8_display.height):
+            pygame.draw.line(
+                self.screen,
+                color,
+                (self.x, y * self.pixel_size + self.y),
+                (self.chip8_display.width * self.pixel_size + self.x - 1, y * self.pixel_size + self.y))
+
+        for x in range(1, self.chip8_display.width):
+            pygame.draw.line(
+                self.screen,
+                color,
+                (x * self.pixel_size + self.x, self.y),
+                (x * self.pixel_size + self.x, self.chip8_display.height * self.pixel_size + self.y - 1))
 
 
 class MemoryView(Drawable):
@@ -312,7 +334,7 @@ class RegistersView(Drawable):
 
     def draw(self) -> None:
         register_count = len(self.chip8_registers)
-        lines = [f' V{to_hex(i, 1)} {to_hex(register, 2)}' for i, register in enumerate(self.chip8_registers)]
+        lines = [f' V{to_hex(i, 1)} {to_hex(register.value, 2)}' for i, register in enumerate(self.chip8_registers)]
         
         self.draw_text(['Registers'])
         self.draw_text(lines[:register_count//2], y_offset=FONT_SIZE)
