@@ -133,7 +133,7 @@ CONTROLS_MAP = {
 if __name__ == '__main__':
     rom_filepath = sys.argv[1] if len(sys.argv) > 1 else None
 
-    if not os.path.isfile(rom_filepath):
+    if rom_filepath is not None and not os.path.isfile(rom_filepath):
         rom_filepath = None
 
     engine = Engine(rom_filepath)
