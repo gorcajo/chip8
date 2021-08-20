@@ -29,9 +29,11 @@ class Engine:
     def run(self) -> None:
         clock = pygame.time.Clock()
         self.running = True
-        step = 0
 
         steps_per_frame = CHIP8_STEPS_PER_SECOND // 60
+
+        step = 0
+        self.chip8_paused = True
 
         while self.running:
             self.manage_inputs()
@@ -59,10 +61,16 @@ class Engine:
 
     def update(self) -> None:
         if self.last_event is not None:
-            if self.last_event == Event.KEY_STEP:
+            if self.last_event == Event.KEY_STEP and self.chip8_paused:
                 self.chip8.step()
-            if self.last_event == Event.KEY_RESET:
+            elif self.last_event == Event.KEY_RESET:
+                self.chip8_paused = True
                 self.chip8.reset()
+            elif self.last_event == Event.KEY_PLAY_PAUSE:
+                self.chip8_paused = not self.chip8_paused
+
+        if not self.chip8_paused:
+            self.chip8.step()
 
 
     def draw(self) -> None:
