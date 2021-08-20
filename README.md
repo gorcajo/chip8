@@ -62,9 +62,9 @@ I made my own assembly language based on CHIP-8's instruction set. I used it jus
 
 | Opcode | Assembly     | Description                          |
 | :----: | :----------- | :----------------------------------- |
-| `3XNN` | `JEQ X NN`   | Skips next instruction if `VX == NN` |
-| `4XNN` | `JNEQ X NN`  | Skips next instruction if `VX != NN` |
-| `5XY0` | `JEQ X Y`    | Skips next instruction if `VX == VY` |
+| `3XNN` | `JEQ VX NN`  | Skips next instruction if `VX == NN` |
+| `4XNN` | `JNEQ VX NN` | Skips next instruction if `VX != NN` |
+| `5XY0` | `JEQ VX VY`  | Skips next instruction if `VX == VY` |
 | `9XY0` | `JNEQ VX VY` | Skips next instruction if `VX != VY` |
 
 ### 5.4. Assignments
@@ -72,24 +72,24 @@ I made my own assembly language based on CHIP-8's instruction set. I used it jus
 | Opcode | Assembly    | Description |
 | :----: | :---------- | :---------- |
 | `6XNN` | `MOV VX NN` | `VX = NN`   |
-| `8XY0` | `MOV X Y`   | `VX = VY`   |
+| `8XY0` | `MOV VX VY` | `VX = VY`   |
 | `ANNN` | `MOV I NNN` | `I = NNN`   |
 
 ### 5.5. Arithemetics
 
-| Opcode | Assembly     | Description               |
-| :----: | :----------- | :------------------------ |
-| `7XNN` | `ADDNC X NN` | `VX = VX + NN`, no carry  |
-| `8XY1` | `OR X Y`     | `VX = VX or VY`, bitwise  |
-| `8XY2` | `AND X Y`    | `VX = VX and VY`, bitwise |
-| `8XY3` | `XOR X Y`    | `VX = VX xor VY`, bitwise |
-| `8XY4` | `ADD VX VY`  | `VX = VX + VY`            |
-| `8XY5` | `SUB VX VY`  | `VX = VX - VY`            |
-| `8XY6` | `RSH VX`     | `VX = VX >> 1`            |
-| `8XY7` | `SUBR VX VY` | `Vx = VY - VX`            |
-| `8XYE` | `LSH VX`     | `VX = VX << 1`            |
-| `CXNN` | `RND VX NN`  | `VX = rand() & NN`        |
-| `FX1E` | `ADDNC I VX` | `I = VX`, no carry        |
+| Opcode | Assembly      | Description               |
+| :----: | :------------ | :------------------------ |
+| `7XNN` | `ADDNC VX NN` | `VX = VX + NN`, no carry  |
+| `8XY1` | `OR VX VY`    | `VX = VX or VY`, bitwise  |
+| `8XY2` | `AND VX VY`   | `VX = VX and VY`, bitwise |
+| `8XY3` | `XOR VX VY`   | `VX = VX xor VY`, bitwise |
+| `8XY4` | `ADD VX VY`   | `VX = VX + VY`            |
+| `8XY5` | `SUB VX VY`   | `VX = VX - VY`            |
+| `8XY6` | `RSH VX`      | `VX = VX >> 1`            |
+| `8XY7` | `SUBR VX VY`  | `Vx = VY - VX`            |
+| `8XYE` | `LSH VX`      | `VX = VX << 1`            |
+| `CXNN` | `RND VX NN`   | `VX = rand() & NN`        |
+| `FX1E` | `ADDNC I VX`  | `I = VX`, no carry        |
 
 ### 5.6. Input
 
