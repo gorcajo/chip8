@@ -46,11 +46,22 @@ class Chip8:
 
         # Execute:
 
-        if instruction.mnemonic == Mnemonic.CLR:
+        if instruction.mnemonic == Mnemonic.MCH:
+            pass
+
+        elif instruction.mnemonic == Mnemonic.CLR:
             self.display.clear()
 
         elif instruction.mnemonic == Mnemonic.JMP:
             self.pc.set_to(instruction.operands[0].value)
+
+        elif instruction.mnemonic == Mnemonic.CALL:
+            self.stack.push(self.pc.value)
+            self.pc.set_to(instruction.operands[0].value)
+
+        elif instruction.mnemonic == Mnemonic.RET:
+            address = self.stack.pop()
+            self.pc.set_to(address)
 
         elif instruction.mnemonic == Mnemonic.MOV:
             target = instruction.operands[0]

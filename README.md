@@ -51,7 +51,7 @@ An assembly instruction is composed by a mnemonic and by zero to three operands.
 - `#NN`: Hexadecimal literal `NN`.
 - `#NNN`: Hexadecimal literal `NNN`.
 
-There is no labels, named constants, expresions or anything else (maybe in the future?).
+There is no labels, named constants, expresions or anything else (maybe in the future?). In fact, there is no assembler (only disassembler for the debugger).
 
 ### 5.1. Display
 
@@ -64,12 +64,17 @@ There is no labels, named constants, expresions or anything else (maybe in the f
 
 | Opcode | Assembly     | Description               |
 | :----: | :----------- | :------------------------ |
-| `00EE` | `RET`        | Returns from subroutine   |
 | `1NNN` | `JMP #NNN`   | Jumps to `NNN`            |
-| `2NNN` | `CALL #NNN`  | Calls subroutine at `NNN` |
 | `BNNN` | `JMPV0 #NNN` | Jumps to `NNN + V0`       |
 
-### 5.3. Conditional jumps
+### 5.3. Subroutines
+
+| Opcode | Assembly     | Description               |
+| :----: | :----------- | :------------------------ |
+| `2NNN` | `CALL #NNN`  | Calls subroutine at `NNN` |
+| `00EE` | `RET`        | Returns from subroutine   |
+
+### 5.4. Conditional jumps
 
 | Opcode | Assembly      | Description                          |
 | :----: | :------------ | :----------------------------------- |
@@ -78,7 +83,7 @@ There is no labels, named constants, expresions or anything else (maybe in the f
 | `5XY0` | `JEQ VX VY`   | Skips next instruction if `VX == VY` |
 | `9XY0` | `JNEQ VX VY`  | Skips next instruction if `VX != VY` |
 
-### 5.4. Assignments
+### 5.5. Assignments
 
 | Opcode | Assembly     | Description |
 | :----: | :----------- | :---------- |
@@ -86,7 +91,7 @@ There is no labels, named constants, expresions or anything else (maybe in the f
 | `8XY0` | `MOV VX VY`  | `VX = VY`   |
 | `ANNN` | `MOV I #NNN` | `I = NNN`   |
 
-### 5.5. Arithemetics
+### 5.6. Arithemetics
 
 | Opcode | Assembly       | Description               |
 | :----: | :------------- | :------------------------ |
@@ -102,7 +107,7 @@ There is no labels, named constants, expresions or anything else (maybe in the f
 | `CXNN` | `RND VX #NN`   | `VX = rand() & NN`        |
 | `FX1E` | `ADDNC I VX`   | `I = VX`, no carry        |
 
-### 5.6. Input
+### 5.7. Input
 
 | Opcode | Assembly   | Description                                                     |
 | :----: | :--------- | :-------------------------------------------------------------- |
@@ -110,7 +115,7 @@ There is no labels, named constants, expresions or anything else (maybe in the f
 | `EX9E` | `JKEY VX`  | Skips next instruction if the key stored in `VX` is pressed     |
 | `EXA1` | `JNKEY VX` | Skips next instruction if the key stored in `VX` is not pressed |
 
-### 5.7. Timers
+### 5.8. Timers
 
 | Opcode | Assembly  | Description                               |
 | :----: | :-------- | :---------------------------------------- |
@@ -118,7 +123,7 @@ There is no labels, named constants, expresions or anything else (maybe in the f
 | `FX15` | `SDLY VX` | Sets the value of the delay timer to `VX` |
 | `FX18` | `SSND VX` | Sets the value of the sound timer to `VY` |
 
-### 5.8. Misc
+### 5.9. Misc
 
 | Opcode | Assembly   | Description                                                           |
 | :----: | :--------- | :-------------------------------------------------------------------- |
@@ -152,7 +157,7 @@ There is no labels, named constants, expresions or anything else (maybe in the f
 
 | Opcode | Assembly        | Done? |
 | :----: | :-------------- | :---: |
-| `0NNN` | `MCH #NNN`      |   ❌   |
+| `0NNN` | `MCH #NNN`      |   ✅   |
 | `00E0` | `CLR`           |   ✅   |
 | `00EE` | `RET`           |   ❌   |
 | `1NNN` | `JMP #NNN`      |   ✅   |
