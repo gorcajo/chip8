@@ -61,7 +61,9 @@ class Chip8:
 
         elif instruction.mnemonic == Mnemonic.RET:
             address = self.stack.pop()
-            self.pc.set_to(address)
+
+            if address is not None:
+                self.pc.set_to(address)
 
         elif instruction.mnemonic == Mnemonic.MOV:
             target = instruction.operands[0]
@@ -263,6 +265,9 @@ class Stack:
 
 
     def pop(self) -> int:
+        if len(self._elements) == 0:
+            return None
+
         return self._elements.pop()
 
 
