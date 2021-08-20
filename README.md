@@ -132,3 +132,56 @@ An assembly instruction is composed by a mnemonic and by zero to three operands.
 - Cowgod's tech reference: <http://devernay.free.fr/hacks/chip8/C8TECH10.HTM>
 - ROMs: <https://johnearnest.github.io/chip8Archive/?sort=platform>
 - ROM pack: <https://web.archive.org/web/20130903155600/http://chip8.com/?page=109>
+
+## 7. To Do List
+
+### 7.1. UI
+
+- Highlight recently changed register, memory address, etc.
+- Buttons in UI, for play/pause, step and reset.
+- Load ROM from UI.
+- Prettier UI.
+
+### 7.2. Opcodes
+
+- ❌: Pending.
+- 🔄: Partially done.
+- ✅: Done.
+
+| Opcode | Assembly        | Done? |
+| :----: | :-------------- | :---: |
+| `0NNN` | `MCH #NNN`      |   ❌   |
+| `00E0` | `CLR`           |   ✅   |
+| `00EE` | `RET`           |   ❌   |
+| `1NNN` | `JMP #NNN`      |   ✅   |
+| `2NNN` | `CALL #NNN`     |   ❌   |
+| `3XNN` | `JEQ VX #NN`    |   ❌   |
+| `4XNN` | `JNEQ VX #NN`   |   ❌   |
+| `5XY0` | `JEQ VX VY`     |   ❌   |
+| `6XNN` | `MOV VX #NN`    |   ✅   |
+| `7XNN` | `ADDNC VX #NN`  |   ✅   |
+| `8XY0` | `MOV VX VY`     |   🔄   |
+| `8XY1` | `OR VX VY`      |   ❌   |
+| `8XY2` | `AND VX VY`     |   ❌   |
+| `8XY3` | `XOR VX VY`     |   ❌   |
+| `8XY4` | `ADD VX VY`     |   ❌   |
+| `8XY5` | `SUB VX VY`     |   ❌   |
+| `8XY6` | `RSH VX`        |   ❌   |
+| `8XY7` | `SUBR VX VY`    |   ❌   |
+| `8XYE` | `LSH VX`        |   ❌   |
+| `9XY0` | `JNEQ VX VY`    |   ❌   |
+| `ANNN` | `MOV I #NNN`    |   ✅   |
+| `BNNN` | `JMPV0 #NNN`    |   ❌   |
+| `CXNN` | `RND VX #NN`    |   ❌   |
+| `DXYN` | `DRAW VX VY #N` |   ✅   |
+| `EX9E` | `JKEY VX`       |   ❌   |
+| `EXA1` | `JNKEY VX`      |   ❌   |
+| `FX07` | `GDLY VX`       |   ❌   |
+| `FX0A` | `WKEY VX`       |   ❌   |
+| `FX15` | `SDLY VX`       |   ❌   |
+| `FX18` | `SSND VX`       |   ❌   |
+| `FX1E` | `ADDNC I VX`    |   🔄   |
+| `FX29` | `FONT VX`       |   ❌   |
+| `FX33` | `BCD VX`        |   ❌   |
+| `FX55` | `DUMP VX`       |   ❌   |
+| `FX65` | `LOAD VX`       |   ❌   |
