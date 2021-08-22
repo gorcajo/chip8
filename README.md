@@ -152,7 +152,6 @@ There is no labels, named constants, expresions or anything else (maybe in the f
 ### 7.2. Opcodes
 
 - ❌: Pending.
-- 🔄: Partially done.
 - ✅: Done.
 
 | Opcode | Assembly        | Done? |
@@ -187,7 +186,7 @@ There is no labels, named constants, expresions or anything else (maybe in the f
 | `FX0A` | `WKEY VX`       |   ❌   |
 | `FX15` | `SDLY VX`       |   ❌   |
 | `FX18` | `SSND VX`       |   ❌   |
-| `FX1E` | `ADDNC I VX`    |   🔄   |
+| `FX1E` | `ADDNC I VX`    |   ✅   |
 | `FX29` | `FONT VX`       |   ❌   |
 | `FX33` | `BCD VX`        |   ❌   |
 | `FX55` | `DUMP VX`       |   ❌   |

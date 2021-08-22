@@ -124,7 +124,9 @@ class Chip8:
                 register_content = self.registers[target.value].value
                 self.registers[target.value].set_to((register_content + source.value) & 0x00ff)
             elif target.type == OperandType.INDEX and source.type == OperandType.REGISTER:
-                pass # TODO
+                index_content = self.index.value
+                register_content = self.registers[source.value].value
+                self.index.set_to((index_content + register_content) & 0xffff)
             else:
                 raise ValueError('Illegal instruction')
 
