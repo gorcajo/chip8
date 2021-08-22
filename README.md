@@ -187,7 +187,7 @@ There is no labels, named constants, expresions or anything else (maybe in the f
 | `FX15` | `SDLY VX`       |   ❌   |
 | `FX18` | `SSND VX`       |   ❌   |
 | `FX1E` | `ADDNC I VX`    |   ✅   |
-| `FX29` | `FONT VX`       |   ❌   |
+| `FX29` | `FONT VX`       |   ✅   |
 | `FX33` | `BCD VX`        |   ❌   |
 | `FX55` | `DUMP VX`       |   ❌   |
 | `FX65` | `LOAD VX`       |   ❌   |
