@@ -1,5 +1,6 @@
 from __future__ import annotations
 import os
+import random
 from typing import List
 
 from instruction import Instruction, Mnemonic, OperandType
@@ -190,6 +191,14 @@ class Chip8:
         elif instruction.mnemonic == Mnemonic.JMPV0:
             v0_register = self.registers[0x00]
             self.pc.set_to((instruction.operands[0].value + v0_register.value) & 0x00ff)
+
+        elif instruction.mnemonic == Mnemonic.RND:
+            target_register = self.registers[instruction.operands[0].value]
+            literal = instruction.operands[1].value
+
+            random_value = random.randint(0, 0xff)
+            result = random_value & literal
+            target_register.set_to(random_value & literal)
 
         elif instruction.mnemonic == Mnemonic.DRAW:
             vx = instruction.operands[0]
