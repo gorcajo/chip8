@@ -167,7 +167,7 @@ There is no labels, named constants, expresions or anything else (maybe in the f
 | `5XY0` | `JEQ VX VY`     |   ✅   |
 | `6XNN` | `MOV VX #NN`    |   ✅   |
 | `7XNN` | `ADDNC VX #NN`  |   ✅   |
-| `8XY0` | `MOV VX VY`     |   🔄   |
+| `8XY0` | `MOV VX VY`     |   ✅   |
 | `8XY1` | `OR VX VY`      |   ❌   |
 | `8XY2` | `AND VX VY`     |   ❌   |
 | `8XY3` | `XOR VX VY`     |   ❌   |

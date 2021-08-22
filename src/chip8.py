@@ -105,7 +105,8 @@ class Chip8:
                 if source.type == OperandType.LITERAL:
                     self.registers[target.value].set_to(source.value)
                 elif source.type == OperandType.REGISTER:
-                    pass # TODO
+                    new_value = self.registers[source.value].value
+                    self.registers[target.value].set_to(new_value)
                 else:
                     raise ValueError('Illegal instruction')
 
