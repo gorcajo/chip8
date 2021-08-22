@@ -20,13 +20,13 @@ pipenv install --ignore-pipfile
 ./run.sh test-roms/1-ibm-logo.ch8
 ```
 
-2. BC test:
+2. BC test (see <https://github.com/daniel5151/AC8E/blob/master/roms/bc_test.txt>):
 
 ```bash
 ./run.sh test-roms/2-bc-test.ch8
 ```
 
-3. Opcode test:
+3. Opcode test (see <https://github.com/corax89/chip8-test-rom>):
 
 ```bash
 ./run.sh test-roms/3-test-opcode.ch8
