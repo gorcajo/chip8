@@ -167,14 +167,14 @@ There is no labels, named constants, expresions or anything else (maybe in the f
 | `6XNN` | `MOV VX #NN`    |   ✅   |
 | `7XNN` | `ADDNC VX #NN`  |   ✅   |
 | `8XY0` | `MOV VX VY`     |   ✅   |
-| `8XY1` | `OR VX VY`      |   ❌   |
-| `8XY2` | `AND VX VY`     |   ❌   |
-| `8XY3` | `XOR VX VY`     |   ❌   |
-| `8XY4` | `ADD VX VY`     |   ❌   |
-| `8XY5` | `SUB VX VY`     |   ❌   |
-| `8XY6` | `RSH VX`        |   ❌   |
-| `8XY7` | `SUBR VX VY`    |   ❌   |
-| `8XYE` | `LSH VX`        |   ❌   |
+| `8XY1` | `OR VX VY`      |   ✅   |
+| `8XY2` | `AND VX VY`     |   ✅   |
+| `8XY3` | `XOR VX VY`     |   ✅   |
+| `8XY4` | `ADD VX VY`     |   ✅   |
+| `8XY5` | `SUB VX VY`     |   ✅   |
+| `8XY6` | `RSH VX`        |   ✅   |
+| `8XY7` | `SUBR VX VY`    |   ✅   |
+| `8XYE` | `LSH VX`        |   ✅   |
 | `9XY0` | `JNEQ VX VY`    |   ✅   |
 | `ANNN` | `MOV I #NNN`    |   ✅   |
 | `BNNN` | `JMPV0 #NNN`    |   ❌   |

@@ -130,6 +130,63 @@ class Chip8:
             else:
                 raise ValueError('Illegal instruction')
 
+        elif instruction.mnemonic == Mnemonic.OR:
+            target_register = self.registers[instruction.operands[0].value]
+            other_register = self.registers[instruction.operands[1].value]
+            target_register.set_to(target_register.value | other_register.value)
+
+        elif instruction.mnemonic == Mnemonic.AND:
+            target_register = self.registers[instruction.operands[0].value]
+            other_register = self.registers[instruction.operands[1].value]
+            target_register.set_to(target_register.value & other_register.value)
+
+        elif instruction.mnemonic == Mnemonic.XOR:
+            target_register = self.registers[instruction.operands[0].value]
+            other_register = self.registers[instruction.operands[1].value]
+            target_register.set_to(target_register.value ^ other_register.value)
+
+        elif instruction.mnemonic == Mnemonic.ADD:
+            target_register = self.registers[instruction.operands[0].value]
+            other_register = self.registers[instruction.operands[1].value]
+
+            result = target_register.value + other_register.value
+            target_register.set_to(result & 0x00ff)
+
+            if result > 0x00ff:
+                self.registers.turn_on_flag()
+
+        elif instruction.mnemonic == Mnemonic.SUB:
+            first_register = self.registers[instruction.operands[0].value]
+            second_register = self.registers[instruction.operands[1].value]
+
+            result = first_register.value - second_register.value
+            first_register.set_to(result & 0x00ff)
+
+            if first_register.value > second_register.value:
+                self.registers.turn_on_flag()
+            else:
+                self.registers.turn_off_flag()
+
+        elif instruction.mnemonic == Mnemonic.RSH:
+            target_register = self.registers[instruction.operands[0].value]
+            target_register.set_to((target_register.value >> 1) & 0x00ff)
+
+        elif instruction.mnemonic == Mnemonic.SUBR:
+            first_register = self.registers[instruction.operands[0].value]
+            second_register = self.registers[instruction.operands[1].value]
+
+            result = second_register.value - first_register.value
+            first_register.set_to(result & 0x00ff)
+
+            if first_register.value > second_register.value:
+                self.registers.turn_on_flag()
+            else:
+                self.registers.turn_off_flag()
+
+        elif instruction.mnemonic == Mnemonic.LSH:
+            target_register = self.registers[instruction.operands[0].value]
+            target_register.set_to((target_register.value << 1) & 0x00ff)
+
         elif instruction.mnemonic == Mnemonic.DRAW:
             vx = instruction.operands[0]
             vy = instruction.operands[1]
