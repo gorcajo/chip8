@@ -187,6 +187,10 @@ class Chip8:
             target_register = self.registers[instruction.operands[0].value]
             target_register.set_to((target_register.value << 1) & 0x00ff)
 
+        elif instruction.mnemonic == Mnemonic.JMPV0:
+            v0_register = self.registers[0x00]
+            self.pc.set_to((instruction.operands[0].value + v0_register.value) & 0x00ff)
+
         elif instruction.mnemonic == Mnemonic.DRAW:
             vx = instruction.operands[0]
             vy = instruction.operands[1]
