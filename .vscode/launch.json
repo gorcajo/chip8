@@ -5,12 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "CHIP-8",
+            "name": "IBM Logo",
             "type": "python",
             "request": "launch",
             "program": "src/main.py",
             "args": [
                 "test-roms/1-ibm-logo.ch8"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Testing ROM",
+            "type": "python",
+            "request": "launch",
+            "program": "src/main.py",
+            "args": [
+                "test-roms/0-tests.ch8"
             ],
             "console": "integratedTerminal"
         }

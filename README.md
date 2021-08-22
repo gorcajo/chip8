@@ -162,9 +162,9 @@ There is no labels, named constants, expresions or anything else (maybe in the f
 | `00EE` | `RET`           |   ✅   |
 | `1NNN` | `JMP #NNN`      |   ✅   |
 | `2NNN` | `CALL #NNN`     |   ✅   |
-| `3XNN` | `JEQ VX #NN`    |   ❌   |
-| `4XNN` | `JNEQ VX #NN`   |   ❌   |
-| `5XY0` | `JEQ VX VY`     |   ❌   |
+| `3XNN` | `JEQ VX #NN`    |   ✅   |
+| `4XNN` | `JNEQ VX #NN`   |   ✅   |
+| `5XY0` | `JEQ VX VY`     |   ✅   |
 | `6XNN` | `MOV VX #NN`    |   ✅   |
 | `7XNN` | `ADDNC VX #NN`  |   ✅   |
 | `8XY0` | `MOV VX VY`     |   🔄   |
@@ -176,7 +176,7 @@ There is no labels, named constants, expresions or anything else (maybe in the f
 | `8XY6` | `RSH VX`        |   ❌   |
 | `8XY7` | `SUBR VX VY`    |   ❌   |
 | `8XYE` | `LSH VX`        |   ❌   |
-| `9XY0` | `JNEQ VX VY`    |   ❌   |
+| `9XY0` | `JNEQ VX VY`    |   ✅   |
 | `ANNN` | `MOV I #NNN`    |   ✅   |
 | `BNNN` | `JMPV0 #NNN`    |   ❌   |
 | `CXNN` | `RND VX #NN`    |   ❌   |

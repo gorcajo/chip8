@@ -52,6 +52,12 @@ class Chip8:
         elif instruction.mnemonic == Mnemonic.CLR:
             self.display.clear()
 
+        elif instruction.mnemonic == Mnemonic.RET:
+            address = self.stack.pop()
+
+            if address is not None:
+                self.pc.set_to(address)
+
         elif instruction.mnemonic == Mnemonic.JMP:
             self.pc.set_to(instruction.operands[0].value)
 
@@ -59,11 +65,37 @@ class Chip8:
             self.stack.push(self.pc.value)
             self.pc.set_to(instruction.operands[0].value)
 
-        elif instruction.mnemonic == Mnemonic.RET:
-            address = self.stack.pop()
+        elif instruction.mnemonic == Mnemonic.JEQ:
+            first_operand = instruction.operands[0]
+            second_operand = instruction.operands[1]
 
-            if address is not None:
-                self.pc.set_to(address)
+            first_register = self.registers[first_operand.value]
+
+            if second_operand.type == OperandType.LITERAL:
+                if first_register.value == second_operand.value:
+                    self.pc.increment()
+            elif second_operand.type == OperandType.REGISTER:
+                second_register = self.registers[second_operand.value]
+                if first_register.value == second_register.value:
+                    self.pc.increment()
+            else:
+                raise ValueError('Illegal instruction')
+
+        elif instruction.mnemonic == Mnemonic.JNEQ:
+            first_operand = instruction.operands[0]
+            second_operand = instruction.operands[1]
+
+            first_register = self.registers[first_operand.value]
+
+            if second_operand.type == OperandType.LITERAL:
+                if first_register.value != second_operand.value:
+                    self.pc.increment()
+            elif second_operand.type == OperandType.REGISTER:
+                second_register = self.registers[second_operand.value]
+                if first_register.value != second_register.value:
+                    self.pc.increment()
+            else:
+                raise ValueError('Illegal instruction')
 
         elif instruction.mnemonic == Mnemonic.MOV:
             target = instruction.operands[0]
