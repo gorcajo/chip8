@@ -184,7 +184,7 @@ There is no labels, named constants, expresions or anything else (maybe in the f
 | `EX9E` | `JKEY VX`       |   ❌   |
 | `EXA1` | `JNKEY VX`      |   ❌   |
 | `FX07` | `GDLY VX`       |   ❌   |
-| `FX0A` | `WKEY VX`       |   ❌   |
+| `FX0A` | `WKEY VX`       |   ✅   |
 | `FX15` | `SDLY VX`       |   ❌   |
 | `FX18` | `SSND VX`       |   ❌   |
 | `FX1E` | `ADDNC I VX`    |   ✅   |

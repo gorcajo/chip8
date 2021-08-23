@@ -17,7 +17,7 @@ class Engine:
         pygame.font.init()
 
         self.screen = pygame.display.set_mode(SCREEN_GEOMETRY, 0, 32)
-        pygame.display.set_caption('CHIP-8 Interpreter')
+        pygame.display.set_caption('CHIP-8 Interpreter [PAUSED]')
 
         self.last_event: Key = None
         self.keys_pressed: List[Key] = []
@@ -73,8 +73,14 @@ class Engine:
             elif self.last_event == Key.KEY_RESET:
                 self.chip8_paused = True
                 self.chip8.reset()
+                pygame.display.set_caption('CHIP-8 Interpreter [PAUSED]')
             elif self.last_event == Key.KEY_PLAY_PAUSE:
                 self.chip8_paused = not self.chip8_paused
+
+                if self.chip8_paused:
+                    pygame.display.set_caption('CHIP-8 Interpreter [PAUSED]')
+                else:
+                    pygame.display.set_caption('CHIP-8 Interpreter [RUNNING]')
 
         if not self.chip8_paused:
             self.chip8.step([k.value for k in self.keys_pressed])
