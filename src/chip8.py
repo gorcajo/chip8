@@ -172,32 +172,44 @@ class Chip8:
             first_register = self.registers[instruction.operands[0].value]
             second_register = self.registers[instruction.operands[1].value]
 
-            result = first_register.value - second_register.value
-            first_register.set_to(result & 0x00ff)
-
-            if first_register.value > second_register.value:
+            if first_register.value >= second_register.value:
                 self.registers.turn_on_flag()
             else:
                 self.registers.turn_off_flag()
 
+            result = first_register.value - second_register.value
+            first_register.set_to(result & 0x00ff)
+
         elif instruction.mnemonic == Mnemonic.RSH:
             target_register = self.registers[instruction.operands[0].value]
+
+            if target_register.value & 0x01 == 0x01:
+                self.registers.turn_on_flag()
+            else:
+                self.registers.turn_off_flag()
+
             target_register.set_to((target_register.value >> 1) & 0x00ff)
 
         elif instruction.mnemonic == Mnemonic.SUBR:
             first_register = self.registers[instruction.operands[0].value]
             second_register = self.registers[instruction.operands[1].value]
 
+            if first_register.value >= second_register.value:
+                self.registers.turn_off_flag()
+            else:
+                self.registers.turn_on_flag()
+
             result = second_register.value - first_register.value
             first_register.set_to(result & 0x00ff)
 
-            if first_register.value > second_register.value:
+        elif instruction.mnemonic == Mnemonic.LSH:
+            target_register = self.registers[instruction.operands[0].value]
+
+            if target_register.value & 0x80 == 0x80:
                 self.registers.turn_on_flag()
             else:
                 self.registers.turn_off_flag()
 
-        elif instruction.mnemonic == Mnemonic.LSH:
-            target_register = self.registers[instruction.operands[0].value]
             target_register.set_to((target_register.value << 1) & 0x00ff)
 
         elif instruction.mnemonic == Mnemonic.JMPV0:
@@ -526,7 +538,7 @@ class Registers:
 
 
     def turn_on_flag(self) -> None:
-        self.registers[0xf].set_to(0xff)
+        self.registers[0xf].set_to(0x01)
 
 
     def turn_off_flag(self) -> None:
