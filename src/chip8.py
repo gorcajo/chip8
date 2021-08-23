@@ -416,15 +416,15 @@ class Display:
 
 
     def get_pixel_at(self, x: int, y: int) -> bool:
-        return self.pixels[y][x]
+        return self.pixels[y % self.height][x % self.width]
 
 
     def turn_on_pixel_at(self, x: int, y: int) -> None:
-        self.pixels[y][x] = True
+        self.pixels[y % self.height][x % self.width] = True
 
 
     def turn_off_pixel_at(self, x: int, y: int) -> None:
-        self.pixels[y][x] = False
+        self.pixels[y % self.height][x % self.width] = False
 
 
 class Register:
