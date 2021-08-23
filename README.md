@@ -4,6 +4,8 @@
 
 This is my own CHIP-8 interpreter. Written in Python with Pygame.
 
+![Demo](https://github.com/gorcajo/chip8/demo.gif)
+
 ## 2. Install
 
 You'll need pipenv:
