@@ -245,6 +245,20 @@ class Chip8:
             self.memory.set_address_to(self.index.value + 1, tens)
             self.memory.set_address_to(self.index.value + 2, units)
 
+        elif instruction.mnemonic == Mnemonic.DUMP:
+            last_register = instruction.operands[0].value & 0x0f
+
+            for i in range(last_register + 1):
+                number = self.registers[i].value
+                self.memory.set_address_to(self.index.value + i, number)
+
+        elif instruction.mnemonic == Mnemonic.LOAD:
+            last_register = instruction.operands[0].value & 0x0f
+
+            for i in range(last_register + 1):
+                self.registers[i].set_to(self.memory[self.index.value + i])
+
+
 
 class Memory:
 

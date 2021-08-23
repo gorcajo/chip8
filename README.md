@@ -190,5 +190,5 @@ There is no labels, named constants, expresions or anything else (maybe in the f
 | `FX1E` | `ADDNC I VX`    |   ✅   |
 | `FX29` | `FONT VX`       |   ✅   |
 | `FX33` | `BCD VX`        |   ✅   |
-| `FX55` | `DUMP VX`       |   ❌   |
-| `FX65` | `LOAD VX`       |   ❌   |
+| `FX55` | `DUMP VX`       |   ✅   |
+| `FX65` | `LOAD VX`       |   ✅   |
