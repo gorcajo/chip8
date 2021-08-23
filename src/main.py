@@ -4,7 +4,6 @@ from typing import List
 import sys
 
 import pygame
-from pygame.event import Event
 
 import chip8
 from constants import *
@@ -20,7 +19,8 @@ class Engine:
         self.screen = pygame.display.set_mode(SCREEN_GEOMETRY, 0, 32)
         pygame.display.set_caption('CHIP-8 Interpreter')
 
-        self.last_event: Event = None
+        self.last_event: Key = None
+        self.keys_pressed: List[Key] = []
 
         self.chip8 = chip8.Chip8(rom)
         self.panel = ui.Panel(self.screen, self.chip8)
@@ -47,7 +47,7 @@ class Engine:
 
 
     def manage_inputs(self) -> None:
-        self.last_event: Event = None
+        self.last_event: Key = None
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -58,19 +58,26 @@ class Engine:
                 elif event.key in CONTROLS_MAP:
                     self.last_event = CONTROLS_MAP[event.key]
 
+        self.keys_pressed = []
+
+        for key in CONTROLS_MAP.keys():
+            if pygame.key.get_pressed()[key] == 1:
+                if CONTROLS_MAP[key].value >= 0x00 and CONTROLS_MAP[key].value <= 0x0f:
+                    self.keys_pressed.append(CONTROLS_MAP[key])
+
 
     def update(self) -> None:
         if self.last_event is not None:
-            if self.last_event == Event.KEY_STEP and self.chip8_paused:
+            if self.last_event == Key.KEY_STEP and self.chip8_paused:
                 self.chip8.step()
-            elif self.last_event == Event.KEY_RESET:
+            elif self.last_event == Key.KEY_RESET:
                 self.chip8_paused = True
                 self.chip8.reset()
-            elif self.last_event == Event.KEY_PLAY_PAUSE:
+            elif self.last_event == Key.KEY_PLAY_PAUSE:
                 self.chip8_paused = not self.chip8_paused
 
         if not self.chip8_paused:
-            self.chip8.step()
+            self.chip8.step([k.value for k in self.keys_pressed])
 
 
     def draw(self) -> None:
@@ -79,47 +86,47 @@ class Engine:
         pygame.display.update()
 
 
-class Event(Enum):
-    KEY_PLAY_PAUSE = 0
-    KEY_STEP = 1
-    KEY_RESET = 2
-    KEY_0 = 3
-    KEY_1 = 4
-    KEY_2 = 5
-    KEY_3 = 6
-    KEY_4 = 7
-    KEY_5 = 8
-    KEY_6 = 9
-    KEY_7 = 10
-    KEY_8 = 11
-    KEY_9 = 12
-    KEY_A = 13
-    KEY_B = 14
-    KEY_C = 15
-    KEY_D = 16
-    KEY_E = 17
-    KEY_F = 18
+class Key(Enum):
+    KEY_0 = 0
+    KEY_1 = 1
+    KEY_2 = 2
+    KEY_3 = 3
+    KEY_4 = 4
+    KEY_5 = 5
+    KEY_6 = 6
+    KEY_7 = 7
+    KEY_8 = 8
+    KEY_9 = 9
+    KEY_A = 10
+    KEY_B = 11
+    KEY_C = 12
+    KEY_D = 13
+    KEY_E = 14
+    KEY_F = 15
+    KEY_PLAY_PAUSE = 16
+    KEY_STEP = 17
+    KEY_RESET = 18
     
 CONTROLS_MAP = {
-    pygame.K_F1: Event.KEY_PLAY_PAUSE,
-    pygame.K_F2: Event.KEY_STEP,
-    pygame.K_F3: Event.KEY_RESET,
-    pygame.K_x: Event.KEY_0,
-    pygame.K_1: Event.KEY_1,
-    pygame.K_2: Event.KEY_2,
-    pygame.K_3: Event.KEY_3,
-    pygame.K_q: Event.KEY_4,
-    pygame.K_w: Event.KEY_5,
-    pygame.K_e: Event.KEY_6,
-    pygame.K_a: Event.KEY_7,
-    pygame.K_s: Event.KEY_8,
-    pygame.K_d: Event.KEY_9,
-    pygame.K_z: Event.KEY_A,
-    pygame.K_c: Event.KEY_B,
-    pygame.K_4: Event.KEY_C,
-    pygame.K_r: Event.KEY_D,
-    pygame.K_f: Event.KEY_E,
-    pygame.K_v: Event.KEY_F,
+    pygame.K_F1: Key.KEY_PLAY_PAUSE,
+    pygame.K_F2: Key.KEY_STEP,
+    pygame.K_F3: Key.KEY_RESET,
+    pygame.K_x: Key.KEY_0,
+    pygame.K_1: Key.KEY_1,
+    pygame.K_2: Key.KEY_2,
+    pygame.K_3: Key.KEY_3,
+    pygame.K_q: Key.KEY_4,
+    pygame.K_w: Key.KEY_5,
+    pygame.K_e: Key.KEY_6,
+    pygame.K_a: Key.KEY_7,
+    pygame.K_s: Key.KEY_8,
+    pygame.K_d: Key.KEY_9,
+    pygame.K_z: Key.KEY_A,
+    pygame.K_c: Key.KEY_B,
+    pygame.K_4: Key.KEY_C,
+    pygame.K_r: Key.KEY_D,
+    pygame.K_f: Key.KEY_E,
+    pygame.K_v: Key.KEY_F,
 }
 
 

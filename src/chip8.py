@@ -3,6 +3,8 @@ import os
 import random
 from typing import List
 
+from pygame import key
+
 from instruction import Instruction, Mnemonic, OperandType
 from tools import *
 
@@ -18,6 +20,8 @@ class Chip8:
         self.delay_timer = DelayTimer()
         self.sound_timer = SoundTimer()
         self.registers = Registers(16)
+
+        self.previous_keys_pressed: List[int] = []
 
         self.reset()
 
@@ -35,7 +39,14 @@ class Chip8:
         self.registers.clear()
 
 
-    def step(self) -> None:
+    def step(self, keys_pressed: List[int] = None) -> None:
+        # Keys:
+
+        if keys_pressed is None:
+            keys_pressed = []
+
+        key_press_changes = keys_pressed != self.previous_keys_pressed
+
         # Fetch:
 
         address = self.pc.value
@@ -229,6 +240,16 @@ class Chip8:
                 if (y + row) >= self.display.height:
                     break
 
+        elif instruction.mnemonic == Mnemonic.WKEY:
+            if not key_press_changes:
+                self.pc.set_to(self.pc.value - 2)
+            else:
+                if len(self.previous_keys_pressed) > len(keys_pressed):
+                    key = list(set(self.previous_keys_pressed) - set(keys_pressed))[0]
+                    self.registers[instruction.operands[0].value].set_to(key)
+                else:
+                    self.pc.set_to(self.pc.value - 2)
+
         elif instruction.mnemonic == Mnemonic.FONT:
             character = self.registers[instruction.operands[0].value].value & 0x0f
             font_addr = self.memory.first_char + 5 * character
@@ -258,6 +279,9 @@ class Chip8:
             for i in range(last_register + 1):
                 self.registers[i].set_to(self.memory[self.index.value + i])
 
+        # Keys:
+
+        self.previous_keys_pressed = keys_pressed
 
 
 class Memory:
