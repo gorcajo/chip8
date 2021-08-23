@@ -137,6 +137,7 @@ There is no labels, named constants, expresions or anything else (maybe in the f
 
 - Wikipedia: <https://en.wikipedia.org/wiki/CHIP-8>
 - Cowgod's tech reference: <http://devernay.free.fr/hacks/chip8/C8TECH10.HTM>
+- Guide on CHIP-8 development: <https://tobiasvl.github.io/blog/write-a-chip-8-emulator/>
 - ROMs: <https://johnearnest.github.io/chip8Archive/?sort=platform>
 - ROM pack: <https://web.archive.org/web/20130903155600/http://chip8.com/?page=109>
 
@@ -188,6 +189,6 @@ There is no labels, named constants, expresions or anything else (maybe in the f
 | `FX18` | `SSND VX`       |   ❌   |
 | `FX1E` | `ADDNC I VX`    |   ✅   |
 | `FX29` | `FONT VX`       |   ✅   |
-| `FX33` | `BCD VX`        |   ❌   |
+| `FX33` | `BCD VX`        |   ✅   |
 | `FX55` | `DUMP VX`       |   ❌   |
 | `FX65` | `LOAD VX`       |   ❌   |

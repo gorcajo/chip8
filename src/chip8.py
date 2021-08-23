@@ -234,12 +234,25 @@ class Chip8:
             font_addr = self.memory.first_char + 5 * character
             self.index.set_to(font_addr)
 
+        elif instruction.mnemonic == Mnemonic.BCD:
+            number = self.registers[instruction.operands[0].value].value
+
+            units = number % 10
+            tens = (number // 10) % 10
+            hundreds = number // 100
+
+            self.memory.set_address_to(self.index.value, hundreds)
+            self.memory.set_address_to(self.index.value + 1, tens)
+            self.memory.set_address_to(self.index.value + 2, units)
+
 
 class Memory:
 
     def __init__(self, size: int, rom: Rom) -> None:
         self.size = size
         self.rom = rom
+
+        self.addresses: List[int] = []
 
         self.bytes_reserved = 0x200
         self.first_char = 0x50
@@ -288,6 +301,13 @@ class Memory:
     def load_rom(self) -> None:
         for i, byte in enumerate(self.rom.data):
             self.addresses[i + self.bytes_reserved] = byte
+
+
+    def set_address_to(self, address: int, new_value: int) -> None:
+        if new_value > 0xff:
+            raise ValueError('value must fit in 1 byte')
+
+        self.addresses[address % self.size] = new_value
 
 
     def __len__(self):
