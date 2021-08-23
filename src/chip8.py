@@ -17,10 +17,11 @@ class Chip8:
         self.pc = ProgramCounter(4096)
         self.index = IndexRegister()
         self.stack = Stack()
-        self.delay_timer = DelayTimer()
-        self.sound_timer = SoundTimer()
+        self.delay_timer = Timer()
+        self.sound_timer = Timer()
         self.registers = Registers(16)
 
+        self.current_step = 0
         self.previous_keys_pressed: List[int] = []
 
         self.reset()
@@ -252,6 +253,10 @@ class Chip8:
             if key not in keys_pressed:
                 self.pc.increment()
 
+        elif instruction.mnemonic == Mnemonic.GDLY:
+            register = self.registers[instruction.operands[0].value]
+            register.set_to(self.delay_timer.value)
+
         elif instruction.mnemonic == Mnemonic.WKEY:
             if not key_press_changes:
                 self.pc.set_to(self.pc.value - 2)
@@ -261,6 +266,14 @@ class Chip8:
                     self.registers[instruction.operands[0].value].set_to(key)
                 else:
                     self.pc.set_to(self.pc.value - 2)
+
+        elif instruction.mnemonic == Mnemonic.SDLY:
+            value = self.registers[instruction.operands[0].value].value
+            self.delay_timer.set_value(value)
+
+        elif instruction.mnemonic == Mnemonic.SSND:
+            value = self.registers[instruction.operands[0].value].value
+            self.sound_timer.set_value(value)
 
         elif instruction.mnemonic == Mnemonic.FONT:
             character = self.registers[instruction.operands[0].value].value & 0x0f
@@ -294,6 +307,14 @@ class Chip8:
         # Keys:
 
         self.previous_keys_pressed = keys_pressed
+
+        # Timers
+
+        if self.current_step % (CHIP8_STEPS_PER_SECOND // CHIP8_TIMER_UPDATES_PER_SECOND) == 0:
+            self.delay_timer.decrement_if_greater_than_zero()
+            self.sound_timer.decrement_if_greater_than_zero()
+
+        self.current_step += 1
 
 
 class Memory:
@@ -344,7 +365,7 @@ class Memory:
     def get_addres_of_font(self, font: int) -> int:
         if font < 0 or font > 15:
             raise ValueError('a font must be between 0 and F in hexadecimal')
-        
+
         return self.memory.first_char + self.char_size * font
 
 
@@ -475,24 +496,21 @@ class Stack:
 class Timer:
 
     def __init__(self) -> None:
-        self.register = 0
+        self._value = 0
 
 
     def set_value(self, new_value: int) -> None:
-        self.register = new_value
+        self._value = new_value
+
+
+    def decrement_if_greater_than_zero(self) -> None:
+        if self._value > 0:
+            self._value -= 1
 
 
     @property
     def value(self) -> None:
-        return self.register
-
-
-class DelayTimer(Timer):
-    pass
-
-
-class SoundTimer(Timer):
-    pass
+        return self._value
 
 
 class Registers:
@@ -532,7 +550,7 @@ class Rom:
 
     def __init__(self, filepath: str) -> None:
         self.data: List[int] = []
-        
+
         if filepath is None:
             return
         elif not os.path.isfile(filepath):

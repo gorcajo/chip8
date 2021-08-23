@@ -30,7 +30,7 @@ class Engine:
         clock = pygame.time.Clock()
         self.running = True
 
-        steps_per_frame = CHIP8_STEPS_PER_SECOND // 60
+        steps_per_frame = CHIP8_STEPS_PER_SECOND // FRAMES_PER_SECOND
 
         step = 0
         self.chip8_paused = True

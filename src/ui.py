@@ -111,7 +111,7 @@ class Panel(Drawable):
             w=160,
             h=52,
             name='Sound Timer',
-            chip8_timer=chip8.delay_timer)
+            chip8_timer=chip8.sound_timer)
         self.drawables.append(sound_timer_view)
 
         registers_view = RegistersView(
@@ -307,7 +307,7 @@ class TimerView(Drawable):
         w: int,
         h: int,
         name: str,
-        chip8_timer: chip8.DelayTimer) -> None:
+        chip8_timer: chip8.Timer) -> None:
 
         super().__init__(screen, font, x, y, w, h)
 
