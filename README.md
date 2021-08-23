@@ -181,8 +181,8 @@ There is no labels, named constants, expresions or anything else (maybe in the f
 | `BNNN` | `JMPV0 #NNN`    |   ✅   |
 | `CXNN` | `RND VX #NN`    |   ✅   |
 | `DXYN` | `DRAW VX VY #N` |   ✅   |
-| `EX9E` | `JKEY VX`       |   ❌   |
-| `EXA1` | `JNKEY VX`      |   ❌   |
+| `EX9E` | `JKEY VX`       |   ✅   |
+| `EXA1` | `JNKEY VX`      |   ✅   |
 | `FX07` | `GDLY VX`       |   ❌   |
 | `FX0A` | `WKEY VX`       |   ✅   |
 | `FX15` | `SDLY VX`       |   ❌   |

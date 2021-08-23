@@ -240,6 +240,18 @@ class Chip8:
                 if (y + row) >= self.display.height:
                     break
 
+        elif instruction.mnemonic == Mnemonic.JKEY:
+            key = self.registers[instruction.operands[0].value].value
+
+            if key in keys_pressed:
+                self.pc.increment()
+
+        elif instruction.mnemonic == Mnemonic.JNKEY:
+            key = self.registers[instruction.operands[0].value].value
+
+            if key not in keys_pressed:
+                self.pc.increment()
+
         elif instruction.mnemonic == Mnemonic.WKEY:
             if not key_press_changes:
                 self.pc.set_to(self.pc.value - 2)
