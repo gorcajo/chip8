@@ -41,6 +41,7 @@ class Engine:
             
             if step % steps_per_frame == 0:
                 self.draw()
+                self.play_sounds()
 
             clock.tick(CHIP8_STEPS_PER_SECOND)
             step += 1
@@ -90,6 +91,10 @@ class Engine:
         self.screen.fill(BACKGROUND_COLOR)
         self.panel.draw()
         pygame.display.update()
+
+
+    def play_sounds(self) -> None:
+        self.panel.play_sounds()
 
 
 class Key(Enum):

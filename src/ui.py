@@ -1,5 +1,6 @@
 from typing import List
 
+import numpy as np
 import pygame
 
 import chip8
@@ -180,9 +181,18 @@ class Panel(Drawable):
         self.drawables.append(interpreter_controls_label)
 
 
+        # SoundPlayer
+
+        self.sound_player = SoundPlayer(chip8.sound_timer)
+
+
     def draw(self) -> None:
         for drawable in self.drawables:
             drawable.draw()
+
+
+    def play_sounds(self) -> None:
+        self.sound_player.update()
 
 
 class GameScreen(Drawable):
@@ -370,3 +380,26 @@ class Label(Drawable):
     def draw(self) -> None:
         self.draw_text(self.lines)
         self.draw_frame()
+
+
+class SoundPlayer:
+
+    def __init__(self, chip8_sound_timer: chip8.Timer) -> None:
+        self.chip8_sound_timer = chip8_sound_timer
+
+        wave = self.generate_square_wave(freq=440, amplitude=0.01, samples=4096)
+        self.sound = pygame.sndarray.make_sound(wave)
+        self.sound.set_volume(0.05)
+
+
+    def update(self) -> None:
+        if self.chip8_sound_timer.value > 0:
+            self.sound.play(-1)
+        else:
+            self.sound.stop()
+
+
+    def generate_square_wave(self, freq:float, amplitude: float, samples: int = 44100) -> np.ndarray:
+        mono_wave = amplitude * np.sin(2 * np.pi * np.arange(samples) * freq / samples).astype(np.float32)
+        stereo_wave = np.repeat(mono_wave.reshape(samples, 1), 2, axis=1)
+        return stereo_wave
