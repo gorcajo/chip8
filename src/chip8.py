@@ -5,7 +5,7 @@ from typing import List
 
 from pygame import key
 
-from instruction import Instruction, Mnemonic, OperandType
+from instruction import Instruction, OperationType, OperandType
 from tools import *
 
 
@@ -59,26 +59,26 @@ class Chip8:
 
         # Execute:
 
-        if instruction.mnemonic == Mnemonic.MCH:
+        if instruction.type == OperationType.MACHINE_CODE:
             pass
 
-        elif instruction.mnemonic == Mnemonic.CLR:
+        elif instruction.type == OperationType.CLEAR_SCREEN:
             self.display.clear()
 
-        elif instruction.mnemonic == Mnemonic.RET:
+        elif instruction.type == OperationType.RETURN_FROM_SUBROUTINE:
             address = self.stack.pop()
 
             if address is not None:
                 self.pc.set_to(address)
 
-        elif instruction.mnemonic == Mnemonic.JMP:
+        elif instruction.type == OperationType.ABSOLUTE_JUMP:
             self.pc.set_to(instruction.operands[0].value)
 
-        elif instruction.mnemonic == Mnemonic.CALL:
+        elif instruction.type == OperationType.CALL_SUBROUTINE:
             self.stack.push(self.pc.value)
             self.pc.set_to(instruction.operands[0].value)
 
-        elif instruction.mnemonic == Mnemonic.JEQ:
+        elif instruction.type == OperationType.SKIP_IF_EQUALS:
             first_operand = instruction.operands[0]
             second_operand = instruction.operands[1]
 
@@ -94,7 +94,7 @@ class Chip8:
             else:
                 raise ValueError('Illegal instruction')
 
-        elif instruction.mnemonic == Mnemonic.JNEQ:
+        elif instruction.type == OperationType.SKIP_IF_NOT_EQUALS:
             first_operand = instruction.operands[0]
             second_operand = instruction.operands[1]
 
@@ -110,7 +110,7 @@ class Chip8:
             else:
                 raise ValueError('Illegal instruction')
 
-        elif instruction.mnemonic == Mnemonic.MOV:
+        elif instruction.type == OperationType.COPY:
             target = instruction.operands[0]
             source = instruction.operands[1]
 
@@ -129,7 +129,7 @@ class Chip8:
             else:
                 raise ValueError('Illegal instruction')
 
-        elif instruction.mnemonic == Mnemonic.ADDNC:
+        elif instruction.type == OperationType.ADD_WITHOUT_CARRY:
             target = instruction.operands[0]
             source = instruction.operands[1]
 
@@ -143,22 +143,22 @@ class Chip8:
             else:
                 raise ValueError('Illegal instruction')
 
-        elif instruction.mnemonic == Mnemonic.OR:
+        elif instruction.type == OperationType.BITWISE_OR:
             target_register = self.registers[instruction.operands[0].value]
             other_register = self.registers[instruction.operands[1].value]
             target_register.set_to(target_register.value | other_register.value)
 
-        elif instruction.mnemonic == Mnemonic.AND:
+        elif instruction.type == OperationType.BITWISE_AND:
             target_register = self.registers[instruction.operands[0].value]
             other_register = self.registers[instruction.operands[1].value]
             target_register.set_to(target_register.value & other_register.value)
 
-        elif instruction.mnemonic == Mnemonic.XOR:
+        elif instruction.type == OperationType.BITWISE_XOR:
             target_register = self.registers[instruction.operands[0].value]
             other_register = self.registers[instruction.operands[1].value]
             target_register.set_to(target_register.value ^ other_register.value)
 
-        elif instruction.mnemonic == Mnemonic.ADD:
+        elif instruction.type == OperationType.ADD_WITH_CARRY:
             target_register = self.registers[instruction.operands[0].value]
             other_register = self.registers[instruction.operands[1].value]
 
@@ -168,7 +168,7 @@ class Chip8:
             if result > 0x00ff:
                 self.registers.turn_on_flag()
 
-        elif instruction.mnemonic == Mnemonic.SUB:
+        elif instruction.type == OperationType.SUBTRACTION_DIRECT:
             first_register = self.registers[instruction.operands[0].value]
             second_register = self.registers[instruction.operands[1].value]
 
@@ -180,7 +180,7 @@ class Chip8:
             result = first_register.value - second_register.value
             first_register.set_to(result & 0x00ff)
 
-        elif instruction.mnemonic == Mnemonic.RSH:
+        elif instruction.type == OperationType.SHIFT_RIGHT:
             target_register = self.registers[instruction.operands[0].value]
 
             if target_register.value & 0x01 == 0x01:
@@ -190,7 +190,7 @@ class Chip8:
 
             target_register.set_to((target_register.value >> 1) & 0x00ff)
 
-        elif instruction.mnemonic == Mnemonic.SUBR:
+        elif instruction.type == OperationType.SUBTRACTION_REVERSE:
             first_register = self.registers[instruction.operands[0].value]
             second_register = self.registers[instruction.operands[1].value]
 
@@ -202,7 +202,7 @@ class Chip8:
             result = second_register.value - first_register.value
             first_register.set_to(result & 0x00ff)
 
-        elif instruction.mnemonic == Mnemonic.LSH:
+        elif instruction.type == OperationType.SHIFT_LEFT:
             target_register = self.registers[instruction.operands[0].value]
 
             if target_register.value & 0x80 == 0x80:
@@ -212,11 +212,11 @@ class Chip8:
 
             target_register.set_to((target_register.value << 1) & 0x00ff)
 
-        elif instruction.mnemonic == Mnemonic.JMPV0:
+        elif instruction.type == OperationType.ABSOLUTE_JUMP_WITH_OFFSET:
             v0_register = self.registers[0x00]
             self.pc.set_to((instruction.operands[0].value + v0_register.value) & 0x00ff)
 
-        elif instruction.mnemonic == Mnemonic.RND:
+        elif instruction.type == OperationType.RANDOM_NUMBER:
             target_register = self.registers[instruction.operands[0].value]
             literal = instruction.operands[1].value
 
@@ -224,7 +224,7 @@ class Chip8:
             result = random_value & literal
             target_register.set_to(random_value & literal)
 
-        elif instruction.mnemonic == Mnemonic.DRAW:
+        elif instruction.type == OperationType.DRAW:
             vx = instruction.operands[0]
             vy = instruction.operands[1]
             literal_n = instruction.operands[2]
@@ -253,23 +253,23 @@ class Chip8:
                 if (y + row) >= self.display.height:
                     break
 
-        elif instruction.mnemonic == Mnemonic.JKEY:
+        elif instruction.type == OperationType.SKIP_IF_KEY_PRESSED:
             key = self.registers[instruction.operands[0].value].value
 
             if key in keys_pressed:
                 self.pc.increment()
 
-        elif instruction.mnemonic == Mnemonic.JNKEY:
+        elif instruction.type == OperationType.SKIP_IF_KEY_NOT_PRESSED:
             key = self.registers[instruction.operands[0].value].value
 
             if key not in keys_pressed:
                 self.pc.increment()
 
-        elif instruction.mnemonic == Mnemonic.GDLY:
+        elif instruction.type == OperationType.GET_DELAY_TIMER:
             register = self.registers[instruction.operands[0].value]
             register.set_to(self.delay_timer.value)
 
-        elif instruction.mnemonic == Mnemonic.WKEY:
+        elif instruction.type == OperationType.WAIT_FOR_KEY:
             if not key_press_changes:
                 self.pc.set_to(self.pc.value - 2)
             else:
@@ -279,20 +279,20 @@ class Chip8:
                 else:
                     self.pc.set_to(self.pc.value - 2)
 
-        elif instruction.mnemonic == Mnemonic.SDLY:
+        elif instruction.type == OperationType.SET_DELAY_TIMER:
             value = self.registers[instruction.operands[0].value].value
             self.delay_timer.set_value(value)
 
-        elif instruction.mnemonic == Mnemonic.SSND:
+        elif instruction.type == OperationType.SET_SOUND_TIMER:
             value = self.registers[instruction.operands[0].value].value
             self.sound_timer.set_value(value)
 
-        elif instruction.mnemonic == Mnemonic.FONT:
+        elif instruction.type == OperationType.LOAD_FONT:
             character = self.registers[instruction.operands[0].value].value & 0x0f
             font_addr = self.memory.first_char + 5 * character
             self.index.set_to(font_addr)
 
-        elif instruction.mnemonic == Mnemonic.BCD:
+        elif instruction.type == OperationType.BCD_CONVERSION:
             number = self.registers[instruction.operands[0].value].value
 
             units = number % 10
@@ -303,14 +303,14 @@ class Chip8:
             self.memory.set_address_to(self.index.value + 1, tens)
             self.memory.set_address_to(self.index.value + 2, units)
 
-        elif instruction.mnemonic == Mnemonic.DUMP:
+        elif instruction.type == OperationType.DUMP_REGISTERS_TO_MEMORY:
             last_register = instruction.operands[0].value & 0x0f
 
             for i in range(last_register + 1):
                 number = self.registers[i].value
                 self.memory.set_address_to(self.index.value + i, number)
 
-        elif instruction.mnemonic == Mnemonic.LOAD:
+        elif instruction.type == OperationType.LOAD_REGISTER_FROM_MEMORY:
             last_register = instruction.operands[0].value & 0x0f
 
             for i in range(last_register + 1):

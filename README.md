@@ -2,7 +2,7 @@
 
 ## 1. Description
 
-This is my own CHIP-8 interpreter. Written in Python with Pygame.
+This is my own [CHIP-8](https://en.wikipedia.org/wiki/CHIP-8) interpreter, with a debugger showing memory contents as [assembly code](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM#3.1), registers, stack and timers.
 
 ![](demo.gif)
 
@@ -69,102 +69,7 @@ More info at <https://github.com/corax89/chip8-test-rom>.
 ./run.sh games/pong.ch8
 ```
 
-## 5. Instruction set
-
-I made an alternative to the assembly language shown in the Cowgod's reference. It's based on CHIP-8's instruction set, I used it just for debugging with the memory viewer.
-
-An assembly instruction is composed by a mnemonic and by zero to three operands. An operand can be:
-
-- `I`: Index register.
-- `VX`: Register at the position `X` in the opcode.
-- `VY`: Register at the position `Y` in the opcode.
-- `#N`: Hexadecimal literal `N`.
-- `#NN`: Hexadecimal literal `NN`.
-- `#NNN`: Hexadecimal literal `NNN`.
-
-There is no labels, named constants, expresions or anything else. In fact, there is no assembler at all (I only made a simple disassembler for the memory viewer).
-
-### 5.1. Display
-
-| Opcode | Assembly        | Description                                                           |
-| :----: | :-------------- | :-------------------------------------------------------------------- |
-| `00E0` | `CLR`           | Clears screen                                                         |
-| `DXYN` | `DRAW VX VY #N` | Draws the sprite pointed by `I` at (`X`, `Y`) with `N` bits of height |
-
-### 5.2. Unconditional jumps
-
-| Opcode | Assembly     | Description         |
-| :----: | :----------- | :------------------ |
-| `1NNN` | `JMP #NNN`   | Jumps to `NNN`      |
-| `BNNN` | `JMPV0 #NNN` | Jumps to `NNN + V0` |
-
-### 5.3. Subroutines
-
-| Opcode | Assembly    | Description               |
-| :----: | :---------- | :------------------------ |
-| `2NNN` | `CALL #NNN` | Calls subroutine at `NNN` |
-| `00EE` | `RET`       | Returns from subroutine   |
-
-### 5.4. Conditional jumps
-
-| Opcode | Assembly      | Description                          |
-| :----: | :------------ | :----------------------------------- |
-| `3XNN` | `JEQ VX #NN`  | Skips next instruction if `VX == NN` |
-| `4XNN` | `JNEQ VX #NN` | Skips next instruction if `VX != NN` |
-| `5XY0` | `JEQ VX VY`   | Skips next instruction if `VX == VY` |
-| `9XY0` | `JNEQ VX VY`  | Skips next instruction if `VX != VY` |
-
-### 5.5. Assignments
-
-| Opcode | Assembly     | Description |
-| :----: | :----------- | :---------- |
-| `6XNN` | `MOV VX #NN` | `VX = NN`   |
-| `8XY0` | `MOV VX VY`  | `VX = VY`   |
-| `ANNN` | `MOV I #NNN` | `I = NNN`   |
-
-### 5.6. Arithemetics
-
-| Opcode | Assembly       | Description               |
-| :----: | :------------- | :------------------------ |
-| `7XNN` | `ADDNC VX #NN` | `VX = VX + NN`, no carry  |
-| `8XY1` | `OR VX VY`     | `VX = VX or VY`, bitwise  |
-| `8XY2` | `AND VX VY`    | `VX = VX and VY`, bitwise |
-| `8XY3` | `XOR VX VY`    | `VX = VX xor VY`, bitwise |
-| `8XY4` | `ADD VX VY`    | `VX = VX + VY`            |
-| `8XY5` | `SUB VX VY`    | `VX = VX - VY`            |
-| `8XY6` | `RSH VX`       | `VX = VX >> 1`            |
-| `8XY7` | `SUBR VX VY`   | `Vx = VY - VX`            |
-| `8XYE` | `LSH VX`       | `VX = VX << 1`            |
-| `CXNN` | `RND VX #NN`   | `VX = rand() & NN`        |
-| `FX1E` | `ADDNC I VX`   | `I = VX`, no carry        |
-
-### 5.7. Input
-
-| Opcode | Assembly   | Description                                                     |
-| :----: | :--------- | :-------------------------------------------------------------- |
-| `FX0A` | `WKEY VX`  | Waits until key press, then sets `VX` to the value of the key   |
-| `EX9E` | `JKEY VX`  | Skips next instruction if the key stored in `VX` is pressed     |
-| `EXA1` | `JNKEY VX` | Skips next instruction if the key stored in `VX` is not pressed |
-
-### 5.8. Timers
-
-| Opcode | Assembly  | Description                               |
-| :----: | :-------- | :---------------------------------------- |
-| `FX07` | `GDLY VX` | Sets `VX` to the value of the delay timer |
-| `FX15` | `SDLY VX` | Sets the value of the delay timer to `VX` |
-| `FX18` | `SSND VX` | Sets the value of the sound timer to `VY` |
-
-### 5.9. Misc
-
-| Opcode | Assembly   | Description                                                           |
-| :----: | :--------- | :-------------------------------------------------------------------- |
-| `0NNN` | `MCH #NNN` | Executes machine code `NNN`                                           |
-| `FX29` | `FONT VX`  | Sets `I` to the location of the sprite for the character in `VX`      |
-| `FX33` | `BCD VX`   | Stores `VX` as BCD at `I*`, `(I+1)*` and `(I+2)*`                     |
-| `FX55` | `DUMP VX`  | Dumps `V0` to `VX` (inclusive) to memory addresses starting at `I*`   |
-| `FX65` | `LOAD VX`  | Loads `V0` to `VX` (inclusive) from memory addresses starting at `I*` |
-
-## 6. Info
+## 5. More info
 
 - CHIP-8 references:
   - Wikipedia: <https://en.wikipedia.org/wiki/CHIP-8>
@@ -174,7 +79,7 @@ There is no labels, named constants, expresions or anything else. In fact, there
   - CHIP-8 Website (Web Archive): <https://web.archive.org/web/20130903155600/http://chip8.com/?page=109>
 - Guide on CHIP-8 development: <https://tobiasvl.github.io/blog/write-a-chip-8-emulator/>
 
-## 7. To Do List
+## 6. Future improvements
 
 - Improve keyboard controls.
 - Try to reduce display flickering.
